@@ -44,6 +44,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MH\GravPoint.cs" />
+    <Compile Include="Sample\AeroDaltonImperial.cs" />
+    <Compile Include="LastSurvive.cs" />
+    <Compile Include="Sample\Common\EnemyData.cs" />
+    <Compile Include="Sample\Common\Enums.cs" />
+    <Compile Include="Sample\Common\Force.cs" />
+    <Compile Include="Sample\Common\GravityPoint.cs" />
+    <Compile Include="Sample\Common\Point.cs" />
+    <Compile Include="Sample\Common\StatEntry.cs" />
+    <Compile Include="Sample\Common\StatisticsModule.cs" />
+    <Compile Include="Sample\Common\TargetStatistics.cs" />
+    <Compile Include="Sample\Common\WaveBullet.cs" />
     <Compile Include="SS2\Anh_Songoku.cs" />
     <Compile Include="SS2\Bao_RockyDant.cs" />
     <Compile Include="SS2\Cat_NonStop.cs" />
