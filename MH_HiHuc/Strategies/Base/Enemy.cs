@@ -14,12 +14,22 @@ namespace MH_HiHuc.Strategies.Base
         public double Changehead { get; set; }
         public long Ctime;
         public bool Live;
-        public PointD guessPosition(long when)
+        public PointD GuessPosition(long when)
         {
             double diff = when - Ctime;
             double newY = Y + Math.Cos(Heading) * Speed * diff;
             double newX = X + Math.Sin(Heading) * Speed * diff;
             return new PointD(newX, newY);
+        }
+
+        public double GuessFirePower()
+        {
+            var firePower = 400/Distance;
+            if (firePower > 3)
+            {
+                firePower = 3;
+            }
+            return firePower;
         }
     }
 }

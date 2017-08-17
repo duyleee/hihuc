@@ -2,8 +2,8 @@
 using Robocode;
 using MH_HiHuc.Strategies.Base.AntiGravity;
 using MH_HiHuc.Strategies.Base;
-using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 
 namespace MH_HiHuc.Strategies
 {
@@ -29,9 +29,11 @@ namespace MH_HiHuc.Strategies
         }
         public void Init()
         {
+            Color col = ColorTranslator.FromHtml("#816ea5");
             MyBot.IsAdjustGunForRobotTurn = true;
             MyBot.IsAdjustRadarForGunTurn = true;
             MyBot.TurnRadarRightRadians(2 * Math.PI);
+            MyBot.SetColors(col, col, col);
         }
 
         public void Run()
