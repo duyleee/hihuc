@@ -10,12 +10,13 @@ namespace MH_HiHuc.Strategies
     public class Meele : IStrategy
     {
         public AdvancedRobot MyBot { get; set; }
-        public PointD MyBotPosition { get
+        public PointD MyBotPosition
+        {
+            get
             {
                 return new PointD(MyBot.X, MyBot.Y);
             }
         }
-        
 
         private Dictionary<string, Enemy> targets { get; set; }
         double PI = Math.PI;
@@ -83,11 +84,11 @@ namespace MH_HiHuc.Strategies
                 if (tank.Live == true)
                 {
                     gravityPoint = new GravityPoint(tank.X, tank.Y, -1000);
-                    force = gravityPoint.GetForce(MyBot.X, MyBot.Y, 2);
+                    force = gravityPoint.GetForce(MyBotPosition, 2);
 
                     //Find the bearing from the point to us
                     ang = NormaliseBearing(MyBotPosition.GetBearing(gravityPoint));
-                    
+
                     //Add the components of this force to the total force in their respective directions
                     xforce += Math.Sin(ang) * force;
                     yforce += Math.Cos(ang) * force;
@@ -104,7 +105,7 @@ namespace MH_HiHuc.Strategies
                 midpointstrength = (randomizer.NextDouble() * 2000) - 1000;
             }
             gravityPoint = new GravityPoint(MyBot.BattleFieldWidth / 2, MyBot.BattleFieldHeight / 2, midpointstrength);
-            force = gravityPoint.GetForce(MyBot.X, MyBot.Y, 1.5);
+            force = gravityPoint.GetForce(MyBotPosition, 1.5);
 
             ang = NormaliseBearing(gravityPoint.GetBearing(MyBot.X, MyBot.Y));
             xforce += Math.Sin(ang) * force;
@@ -126,7 +127,7 @@ namespace MH_HiHuc.Strategies
         {
             Console.WriteLine("Going to " + point.X + "," + point.Y);
             double dist = 20;
-            double angle = ToDegrees(MyBotPosition.GetBearing(point));
+            double angle = Utilities.RadiansToDegrees(MyBotPosition.GetBearing(point));
             double r = TurnByDegrees(angle);
             MyBot.SetAhead(dist * r);
         }
@@ -155,10 +156,7 @@ namespace MH_HiHuc.Strategies
             return dir;
         }
 
-        double ToDegrees(double radians)
-        {
-            return (180 / Math.PI) * radians;
-        }
+
 
         double NormaliseBearing(double ang)
         {

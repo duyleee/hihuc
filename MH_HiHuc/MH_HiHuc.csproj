@@ -72,6 +72,7 @@
     <Compile Include="Strategies\Base\Enemy.cs" />
     <Compile Include="Strategies\Base\IStrategy.cs" />
     <Compile Include="Strategies\Base\PointD.cs" />
+    <Compile Include="Strategies\Base\Utilities.cs" />
     <Compile Include="Strategies\Meele.cs" />
     <Compile Include="StrategyTest.cs" />
     <Compile Include="TL.cs" />

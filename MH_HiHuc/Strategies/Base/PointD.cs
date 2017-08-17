@@ -26,7 +26,9 @@ namespace MH_HiHuc.Strategies.Base
 
         public double GetBearing(double x, double y)
         {
-            return Math.PI / 2 - Math.Atan2(y - Y, x - X);
+            var radians =  Math.PI / 2 - Math.Atan2(y- Y, x - X);
+            var degrees = Utilities.RadiansToDegrees(radians); //for debugging
+            return radians;
         }
 
         public double GetBearing(PointD point)
