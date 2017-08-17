@@ -13,9 +13,14 @@ namespace MH_HiHuc.Strategies.Base.AntiGravity
             Power = power;
         }
 
-        public double GetForce(double x, double y, double weight)
+        public double GetForce(double x, double y, double forceReducer)
         {
-            return Power / Math.Pow(this.Distance(x, y), weight);
+            return Power / Math.Pow(this.Distance(x, y), forceReducer);
+        }
+
+        public double GetForce(PointD point, double weight)
+        {
+            return GetForce(point.X, point.Y, weight);
         }
     }
 }

@@ -110,10 +110,10 @@ namespace MH_HiHuc.Strategies
 
             /**The following four lines add wall avoidance.  They will only affect us if the bot is close 
             to the walls due to the force from the walls decreasing at a power 3.**/
-            xforce += (new GravityPoint(MyBot.BattleFieldWidth, MyBot.Y, 5000)).GetForce(MyBot.X, MyBot.Y, 3);
-            xforce -= (new GravityPoint(0, MyBot.Y, 5000)).GetForce(MyBot.X, MyBot.Y, 3);
-            yforce += (new GravityPoint(MyBot.X, MyBot.BattleFieldHeight, 5000)).GetForce(MyBot.X, MyBot.Y, 3);
-            yforce -= (new GravityPoint(MyBot.X, 0, 5000)).GetForce(MyBot.X, MyBot.Y, 3);
+            xforce += (new GravityPoint(MyBot.BattleFieldWidth, MyBot.Y, 5000)).GetForce(MyBotPosition, 3);
+            xforce -= (new GravityPoint(0, MyBot.Y, 5000)).GetForce(MyBotPosition, 3);
+            yforce += (new GravityPoint(MyBot.X, MyBot.BattleFieldHeight, 5000)).GetForce(MyBotPosition, 3);
+            yforce -= (new GravityPoint(MyBot.X, 0, 5000)).GetForce(MyBotPosition, 3);
 
             //Move in the direction of our resolved force.
             GotoPoint(new PointD(MyBot.X - xforce, MyBot.Y - yforce));
@@ -124,7 +124,7 @@ namespace MH_HiHuc.Strategies
         {
             Console.WriteLine("Going to " + point.X + "," + point.Y);
             double dist = 20;
-            double angle = ToDegrees(point.GetBearing(MyBot.X, MyBot.Y));
+            double angle = ToDegrees(MyBotPosition.GetBearing(point));
             double r = TurnByDegrees(angle);
             MyBot.SetAhead(dist * r);
         }

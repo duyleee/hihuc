@@ -19,6 +19,11 @@ namespace MH_HiHuc.Strategies.Base
             return Math.Sqrt(xo * xo + yo * yo);
         }
 
+        public double Distance(PointD point)
+        {
+            return Distance(point.X, point.Y);
+        }
+
         public double GetBearing(double x, double y)
         {
             return Math.PI / 2 - Math.Atan2(y - Y, x - X);
