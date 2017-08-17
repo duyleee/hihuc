@@ -83,7 +83,7 @@ namespace MH_HiHuc.Strategies
             {
                 if (tank.Live == true)
                 {
-                    gravityPoint = new GravityPoint(tank.X, tank.Y, -1000);
+                    gravityPoint = new GravityPoint(tank.X, tank.Y, 5000);
                     force = gravityPoint.GetForce(MyBotPosition, 2);
 
                     //Find the bearing from the point to us
@@ -113,10 +113,10 @@ namespace MH_HiHuc.Strategies
 
             /**The following four lines add wall avoidance.  They will only affect us if the bot is close 
             to the walls due to the force from the walls decreasing at a power 3.**/
-            xforce += (new GravityPoint(MyBot.BattleFieldWidth, MyBot.Y, 5000)).GetForce(MyBotPosition, 3);
-            xforce -= (new GravityPoint(0, MyBot.Y, 5000)).GetForce(MyBotPosition, 3);
-            yforce += (new GravityPoint(MyBot.X, MyBot.BattleFieldHeight, 5000)).GetForce(MyBotPosition, 3);
-            yforce -= (new GravityPoint(MyBot.X, 0, 5000)).GetForce(MyBotPosition, 3);
+            xforce += (new GravityPoint(MyBot.BattleFieldWidth, MyBot.Y, 5000)).GetForce(MyBotPosition, 2);
+            xforce -= (new GravityPoint(0, MyBot.Y, 5000)).GetForce(MyBotPosition, 2);
+            yforce += (new GravityPoint(MyBot.X, MyBot.BattleFieldHeight, 5000)).GetForce(MyBotPosition, 2);
+            yforce -= (new GravityPoint(MyBot.X, 0, 5000)).GetForce(MyBotPosition, 2);
 
             //Move in the direction of our resolved force.
             GotoPoint(new PointD(MyBot.X - xforce, MyBot.Y - yforce));
