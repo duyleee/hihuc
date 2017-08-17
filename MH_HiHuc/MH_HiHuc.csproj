@@ -44,9 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MH\GravPoint.cs" />
     <Compile Include="Sample\AeroDaltonImperial.cs" />
-    <Compile Include="LastSurvive.cs" />
     <Compile Include="Sample\Common\EnemyData.cs" />
     <Compile Include="Sample\Common\Enums.cs" />
     <Compile Include="Sample\Common\Force.cs" />
@@ -70,6 +68,12 @@
     <Compile Include="SS2\Hong_TrieuTuLong.cs" />
     <Compile Include="SS2\Hung_ROBO.cs" />
     <Compile Include="SS2\Hy_Robot.cs" />
+    <Compile Include="Strategies\Base\AntiGravity\GravityPoint.cs" />
+    <Compile Include="Strategies\Base\Enemy.cs" />
+    <Compile Include="Strategies\Base\IStrategy.cs" />
+    <Compile Include="Strategies\Base\PointD.cs" />
+    <Compile Include="Strategies\Meele.cs" />
+    <Compile Include="StrategyTest.cs" />
     <Compile Include="TL.cs" />
     <Compile Include="SS2\Lewis_AAA.cs" />
     <Compile Include="SS2\Luan_Quasimodo.cs" />
@@ -86,6 +90,7 @@
     <Compile Include="SS2\Tri_DieHard.cs" />
     <Compile Include="SS2\TuanDo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
