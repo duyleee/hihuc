@@ -6,7 +6,7 @@ namespace MH_HiHuc
     public class TL : TeamRobot
     {
         
-        double _randomDistance = 120;
+        double _randomDistance = 250;
         private Random randomizer = new Random();
         public override void Run()
         {
@@ -50,7 +50,7 @@ namespace MH_HiHuc
             {
                 //----------------------------------------------------GUN-------------------------------------------
                 //choose bullet power base on distance, if distance to enemy larger than 400 => bullet power = 1
-                var bullerPower = 400 / e.Distance;
+                var bullerPower = 600 / e.Distance;
 
                 //simplest linear targeting algorithm - http://robowiki.net/wiki/Linear_Targeting
                 double absoluteBearing = Heading + e.Bearing;
@@ -72,12 +72,12 @@ namespace MH_HiHuc
             if (tooCloseToWall > 0) tooCloseToWall--;
 
             // normal movement: switch directions if we've stopped
-            if (Velocity == 0)
-            {
-                moveDirection *= -1;
-                SetAhead(100 * moveDirection);
-            }
-            else
+            //if (Velocity == 0)
+            //{
+            //    moveDirection *= -1;
+            //    SetAhead(300 * moveDirection);
+            //}
+            //else
 
             if (DistanceRemaining == 0)
             {

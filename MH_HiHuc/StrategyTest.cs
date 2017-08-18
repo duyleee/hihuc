@@ -30,5 +30,11 @@ namespace MH_HiHuc
         {
             Stragegy.OnScannedRobot(evnt);
         }
+
+        public override void OnHitRobot(HitRobotEvent evnt)
+        {
+            //when hit another robot, change movement, newMoment = oldMovment +- 10
+            Fire(3);
+        }
     }
 }

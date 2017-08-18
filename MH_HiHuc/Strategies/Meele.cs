@@ -185,7 +185,7 @@ namespace MH_HiHuc.Strategies
 
         void doFirePower()
         {
-            firePower = 400 / target.Distance;//selects a bullet power based on our distance away from the target
+            firePower = 600 / target.Distance;//selects a bullet power based on our distance away from the target
         }
 
         void doGun()
