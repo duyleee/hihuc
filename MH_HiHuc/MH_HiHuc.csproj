@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PredictiveTargetingTest.cs" />
     <Compile Include="Sample\AeroDaltonImperial.cs" />
     <Compile Include="Sample\Common\EnemyData.cs" />
     <Compile Include="Sample\Common\Enums.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="Strategies\Base\IStrategy.cs" />
     <Compile Include="Strategies\Base\PointD.cs" />
     <Compile Include="Strategies\Meele.cs" />
+    <Compile Include="Strategies\PredictiveTargeting.cs" />
     <Compile Include="StrategyTest.cs" />
     <Compile Include="TL.cs" />
     <Compile Include="SS2\Lewis_AAA.cs" />
