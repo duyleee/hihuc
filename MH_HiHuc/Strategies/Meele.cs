@@ -19,10 +19,12 @@ namespace MH_HiHuc.Strategies
         }
 
         private Dictionary<string, Enemy> targets { get; set; }
+        private Enemy target { get; set; }
         double PI = Math.PI;
         double midpointstrength = 0;
         int midpointcount = 0;
         Random randomizer = new Random();
+        double firePower;
         public Meele(AdvancedRobot robot)
         {
             MyBot = robot;
@@ -41,6 +43,10 @@ namespace MH_HiHuc.Strategies
         {
             AntiGravityMove();
             MyBot.SetTurnRadarLeftRadians(2 * PI);
+            doFirePower();
+            //doScanner();
+            doGun();
+            MyBot.Fire(firePower);
             MyBot.Execute();
         }
 
@@ -55,6 +61,7 @@ namespace MH_HiHuc.Strategies
             //the next line gets the absolute bearing to the point where the bot is
             double absbearing_rad = (MyBot.HeadingRadians + e.BearingRadians) % (2 * PI);
             //this section sets all the information about our target
+            target = targets[e.Name];
             targets[e.Name].Name = e.Name;
             double h = NormaliseBearing(e.HeadingRadians - targets[e.Name].Heading);
             h = h / (MyBot.Time - targets[e.Name].Ctime);
@@ -174,6 +181,47 @@ namespace MH_HiHuc.Strategies
             if (ang < 0)
                 ang += 2 * PI;
             return ang;
+        }
+
+        void doFirePower()
+        {
+            firePower = 400 / target.Distance;//selects a bullet power based on our distance away from the target
+        }
+
+        void doGun()
+        {
+            //works out how long it would take a bullet to travel to where the enemy is *now*
+            //this is the best estimation we have
+            long time = MyBot.Time + (int)(target.Distance / (20 - (3 * firePower)));
+
+            //offsets the gun by the angle to the next shot based on linear targeting provided by the enemy class
+            var guessPosition = target.GuessPosition(time);
+            double gunOffset = MyBot.GunHeadingRadians - MyBotPosition.GetBearing(guessPosition);
+            MyBot.SetTurnGunLeftRadians(NormaliseBearing(gunOffset));
+        }
+
+        void doScanner()
+        {
+            double radarOffset;
+            if (MyBot.Time - target.Ctime > 4)
+            {   //if we haven't seen anybody for a bit....
+                radarOffset = 360;      //rotate the radar to find a target
+            }
+            else
+            {
+
+                //next is the amount we need to rotate the radar by to scan where the target is now
+                radarOffset = MyBot.RadarHeadingRadians - MyBotPosition.GetBearing(target.X, target.Y);
+
+                //this adds or subtracts small amounts from the bearing for the radar to produce the wobbling
+                //and make sure we don't lose the target
+                if (radarOffset < 0)
+                    radarOffset -= PI / 8;
+                else
+                    radarOffset += PI / 8;
+            }
+            //turn the radar
+            MyBot.SetTurnRadarLeftRadians(NormaliseBearing(radarOffset));
         }
     }
 }

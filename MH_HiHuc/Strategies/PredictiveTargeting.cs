@@ -15,6 +15,13 @@ namespace MH_HiHuc.Strategies
         double PI = Math.PI;          //just a constant
         int direction = 1;              //direction we are heading...1 = forward, -1 = backwards
         double firePower;
+        public PointD MyBotPosition
+        {
+            get
+            {
+                return new PointD(MyBot.X, MyBot.Y);
+            }
+        }
 
         public PredictiveTargeting(AdvancedRobot robot)
         {
@@ -66,7 +73,7 @@ namespace MH_HiHuc.Strategies
         void doScanner()
         {
             double radarOffset;
-            if (DateTime.Now.Ticks - target.Ctime > 4)
+            if (MyBot.Time - target.Ctime > 4)
             {   //if we haven't seen anybody for a bit....
                 radarOffset = 360;      //rotate the radar to find a target
             }
@@ -91,11 +98,13 @@ namespace MH_HiHuc.Strategies
         {
             //works out how long it would take a bullet to travel to where the enemy is *now*
             //this is the best estimation we have
-            long time = DateTime.Now.Ticks + (int)(target.Distance / (20 - (3 * firePower)));
+            long time = MyBot.Time + (int)(target.Distance / (20 - (3 * firePower)));
 
             //offsets the gun by the angle to the next shot based on linear targeting provided by the enemy class
             var guessPosition = target.GuessPosition(time);
-            double gunOffset = MyBot.GunHeadingRadians - absbearing(MyBot.X, MyBot.Y, guessPosition.X, guessPosition.Y);
+            double gunOffset = MyBot.GunHeadingRadians - MyBotPosition.GetBearing(guessPosition);
+            var abc = Utilities.RadiansToDegrees(gunOffset);
+            var tub = Utilities.RadiansToDegrees(NormaliseBearing(gunOffset));
             MyBot.SetTurnGunLeftRadians(NormaliseBearing(gunOffset));
         }
         double NormaliseBearing(double ang)
