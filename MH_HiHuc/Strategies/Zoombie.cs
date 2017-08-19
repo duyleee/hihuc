@@ -26,9 +26,8 @@ namespace MH_HiHuc.Strategies
 
         public void Init()
         {
-            MyBot.IsAdjustGunForRobotTurn = true;
-            Color col = ColorTranslator.FromHtml("#816ea5");
-            MyBot.SetColors(col, Color.BlueViolet, Color.DarkCyan);
+            MyBot.IsAdjustGunForRobotTurn = true;            
+            MyBot.SetColors(Utilities.GetTeamColor(), Color.BlueViolet, Color.DarkCyan);
         }
 
         public void OnHitByBullet(HitByBulletEvent e)

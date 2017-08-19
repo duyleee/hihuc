@@ -17,8 +17,7 @@ namespace MH_HiHuc.Strategies
 
         public void Init()
         {
-            Color col = ColorTranslator.FromHtml("#816ea5");
-            MyBot.SetColors(col, Color.Yellow, Color.DarkCyan);
+            MyBot.SetColors(Utilities.GetTeamColor(), Color.Yellow, Color.DarkCyan);
 
             MyBot.IsAdjustGunForRobotTurn = true;
         }

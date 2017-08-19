@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,6 +29,11 @@ namespace MH_HiHuc.Base
             if (ang < 0)
                 ang += 2 * Math.PI;
             return ang;
+        }
+
+        public static Color GetTeamColor()
+        {
+            return ColorTranslator.FromHtml("#816ea5");
         }
     }
 }
