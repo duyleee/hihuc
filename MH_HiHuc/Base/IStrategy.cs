@@ -1,4 +1,4 @@
-﻿using MH_HiHuc.Strategies.Base;
+﻿using MH_HiHuc.Base;
 using Robocode;
 
 namespace MH_HiHuc.Strategies

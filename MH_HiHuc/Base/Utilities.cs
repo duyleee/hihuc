@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MH_HiHuc.Strategies.Base
+namespace MH_HiHuc.Base
 {
     public static class Utilities
     {

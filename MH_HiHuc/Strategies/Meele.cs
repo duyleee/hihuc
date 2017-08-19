@@ -1,6 +1,6 @@
 ﻿using System;
 using Robocode;
-using MH_HiHuc.Strategies.Base;
+using MH_HiHuc.Base;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;

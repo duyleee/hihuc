@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MH_HiHuc.Strategies.Base
+namespace MH_HiHuc.Base
 {
     [Serializable()]
     public class PointD

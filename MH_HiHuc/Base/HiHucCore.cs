@@ -1,9 +1,10 @@
-﻿using Robocode;
+﻿using MH_HiHuc.Strategies;
+using Robocode;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MH_HiHuc.Strategies.Base
+namespace MH_HiHuc.Base
 {
     public class HiHucCore : TeamRobot
     {

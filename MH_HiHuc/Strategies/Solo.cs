@@ -1,5 +1,5 @@
 ﻿using System;
-using MH_HiHuc.Strategies.Base;
+using MH_HiHuc.Base;
 using Robocode;
 using System.Drawing;
 using Robocode.Util;
