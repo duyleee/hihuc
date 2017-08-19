@@ -1,6 +1,5 @@
 ﻿using System;
 using Robocode;
-using MH_HiHuc.Strategies.Base.AntiGravity;
 using MH_HiHuc.Strategies.Base;
 using System.Collections.Generic;
 using System.Drawing;
@@ -9,7 +8,7 @@ namespace MH_HiHuc.Strategies
 {
     public class Meele : IStrategy
     {
-        public AdvancedRobot MyBot { get; set; }
+        public HiHucCore MyBot { get; set; }
         public PointD MyBotPosition
         {
             get
@@ -18,119 +17,123 @@ namespace MH_HiHuc.Strategies
             }
         }
 
-        private Dictionary<string, Enemy> targets { get; set; }
-        private Enemy target { get; set; }
+        Enemy _target;
+        private Enemy target
+        {
+            get
+            {
+                if (_target == null || _target.Live == false || MyBot.Targets[_target.Name].Live == false)
+                {
+                    var currentTargets = new Enemy[MyBot.Targets.Values.Count];
+                    MyBot.Targets.Values.CopyTo(currentTargets, 0);
+                    double closestDistance = 1000;
+                    for (int i = 0; i < currentTargets.Length; i++)
+                    {
+                        var _distance = currentTargets[i].Position.Distance(MyBotPosition);
+                        if (_distance < closestDistance)
+                        {
+                            closestDistance = _distance;
+                            _target = currentTargets[i];
+                        }
+                    }
+
+                }
+                return _target != null ? _target : new Enemy()
+                {
+                    Live = false
+                };
+            }
+        }
         double PI = Math.PI;
         double midpointstrength = 0;
         int midpointcount = 0;
         Random randomizer = new Random();
         double firePower;
-        public Meele(AdvancedRobot robot)
+        List<ForcedPoint> BulletForces = new List<ForcedPoint>();
+        public Meele(HiHucCore robot)
         {
             MyBot = robot;
-            targets = new Dictionary<string, Enemy>();
         }
         public void Init()
         {
-            Color col = ColorTranslator.FromHtml("#816ea5");
             MyBot.IsAdjustGunForRobotTurn = true;
             MyBot.IsAdjustRadarForGunTurn = true;
             MyBot.TurnRadarRightRadians(2 * Math.PI);
-            MyBot.SetColors(col, col, col);
         }
 
         public void Run()
         {
-            AntiGravityMove();
+            ForceMoving();
             MyBot.SetTurnRadarLeftRadians(2 * PI);
             doFirePower();
-            //doScanner();
             doGun();
             MyBot.Fire(firePower);
             MyBot.Execute();
         }
 
-        public void OnScannedRobot(ScannedRobotEvent e)
+        private List<ForcedPoint> recentForces = new List<ForcedPoint>();
+        private void ForceMoving()
         {
-            if (!targets.ContainsKey(e.Name))
-            {
-                var enemy = new Enemy();
-                targets.Add(e.Name, enemy);
-            }
-            //targets[e.Name]
-            //the next line gets the absolute bearing to the point where the bot is
-            double absbearing_rad = (MyBot.HeadingRadians + e.BearingRadians) % (2 * PI);
-            //this section sets all the information about our target
-            target = targets[e.Name];
-            targets[e.Name].Name = e.Name;
-            double h = NormaliseBearing(e.HeadingRadians - targets[e.Name].Heading);
-            h = h / (MyBot.Time - targets[e.Name].Ctime);
-            targets[e.Name].Changehead = h;
-            targets[e.Name].X = MyBot.X + Math.Sin(absbearing_rad) * e.Distance; //works out the x coordinate of where the target is
-            targets[e.Name].Y = MyBot.Y + Math.Cos(absbearing_rad) * e.Distance; //works out the y coordinate of where the target is
-            targets[e.Name].Bearing = e.BearingRadians;
-            targets[e.Name].Heading = e.HeadingRadians;
-            targets[e.Name].Ctime = MyBot.Time;               //game time at which this scan was produced
-            targets[e.Name].Speed = e.Velocity;
-            targets[e.Name].Distance = e.Distance;
-            targets[e.Name].Live = true;
-        }
+            recentForces.Clear();
+            PointD nextPosition = MyBotPosition;
+            Enemy[] enemies = new Enemy[MyBot.Targets.Values.Count];
+            MyBot.Targets.Values.CopyTo(enemies, 0);
 
-        private void AntiGravityMove()
-        {
-            double xforce = 0;
-            double yforce = 0;
-            double force;
-            double ang;
-            GravityPoint gravityPoint;
-            Enemy[] enemies = new Enemy[targets.Values.Count];
-            targets.Values.CopyTo(enemies, 0);
-
+            #region Tanks forced
             foreach (var tank in enemies)
             {
                 if (tank.Live == true)
                 {
-                    gravityPoint = new GravityPoint(tank.X, tank.Y, 5000);
-                    force = gravityPoint.GetForce(MyBotPosition, 2);
-
-                    //Find the bearing from the point to us
-                    ang = NormaliseBearing(MyBotPosition.GetBearing(gravityPoint));
-
-                    //Add the components of this force to the total force in their respective directions
-                    xforce += Math.Sin(ang) * force;
-                    yforce += Math.Cos(ang) * force;
+                    var tankForce = new ForcedPoint(tank.X, tank.Y, 5000);
+                    recentForces.Add(tankForce);
+                    nextPosition = tankForce.Force(nextPosition);
                 }
             }
+            #endregion
 
-            /**The next section adds a middle point with a random (positive or negative) strength.
-		    The strength changes every 5 turns, and goes between -1000 and 1000.  This gives a better
-		    overall movement.**/
+            #region Middle-Field Forced
             midpointcount++;
             if (midpointcount > 5)
             {
                 midpointcount = 0;
-                midpointstrength = (randomizer.NextDouble() * 2000) - 1000;
+                midpointstrength = (randomizer.NextDouble() * 5000);
             }
-            gravityPoint = new GravityPoint(MyBot.BattleFieldWidth / 2, MyBot.BattleFieldHeight / 2, midpointstrength);
-            force = gravityPoint.GetForce(MyBotPosition, 1.5);
+            var middleFieldForce = new ForcedPoint(MyBot.BattleFieldWidth / 2, MyBot.BattleFieldHeight / 2, midpointstrength);
+            recentForces.Add(middleFieldForce);
+            nextPosition = middleFieldForce.Force(nextPosition);
+            #endregion
 
-            ang = NormaliseBearing(gravityPoint.GetBearing(MyBot.X, MyBot.Y));
-            xforce += Math.Sin(ang) * force;
-            yforce += Math.Cos(ang) * force;
+            #region Bullets forced
+            if (BulletForces.Count > 0)
+            {
+                foreach (var bulletForce in BulletForces)
+                {
+                    recentForces.Add(bulletForce);
+                    nextPosition = bulletForce.Force(nextPosition);
+                    bulletForce.AffectTurn--;
+                }
+                BulletForces = BulletForces.FindAll(bf => bf.AffectTurn > 0);
+            }
+            #endregion
 
-            /**The following four lines add wall avoidance.  They will only affect us if the bot is close 
-            to the walls due to the force from the walls decreasing at a power 3.**/
-            xforce += (new GravityPoint(MyBot.BattleFieldWidth, MyBot.Y, 5000)).GetForce(MyBotPosition, 2);
-            xforce -= (new GravityPoint(0, MyBot.Y, 5000)).GetForce(MyBotPosition, 2);
-            yforce += (new GravityPoint(MyBot.X, MyBot.BattleFieldHeight, 5000)).GetForce(MyBotPosition, 2);
-            yforce -= (new GravityPoint(MyBot.X, 0, 5000)).GetForce(MyBotPosition, 2);
+            #region Wall forced
+            var wallForcePower = 4500;
+            var rightWallForce = (new ForcedPoint(MyBot.BattleFieldWidth, MyBot.Y, wallForcePower)); recentForces.Add(rightWallForce);
+            var leftWallForce = (new ForcedPoint(0, MyBot.Y, wallForcePower)); recentForces.Add(leftWallForce);
+            var topWallForce = (new ForcedPoint(MyBot.X, MyBot.BattleFieldHeight, wallForcePower)); recentForces.Add(topWallForce);
+            var bottomWallForce = (new ForcedPoint(MyBot.X, 0, wallForcePower)); recentForces.Add(bottomWallForce);
+            nextPosition = rightWallForce.Force(nextPosition);
+            nextPosition = leftWallForce.Force(nextPosition);
+            nextPosition = topWallForce.Force(nextPosition);
+            nextPosition = bottomWallForce.Force(nextPosition);
+            #endregion
 
             //Move in the direction of our resolved force.
-            GotoPoint(new PointD(MyBot.X - xforce, MyBot.Y - yforce));
+            GotoPoint(nextPosition);
         }
 
         /**Move towards an x and y coordinate**/
-        void GotoPoint(PointD point)
+        private void GotoPoint(PointD point)
         {
             Console.WriteLine("Going to " + point.X + "," + point.Y);
             double dist = 20;
@@ -141,11 +144,11 @@ namespace MH_HiHuc.Strategies
 
         /**Turns the shortest angle possible to come to a heading, then returns the direction the
 	       the bot needs to move in.**/
-        int TurnByDegrees(double angle)
+        private int TurnByDegrees(double angle)
         {
             double ang;
             int dir;
-            ang = NormaliseBearing(MyBot.Heading - angle);
+            ang = Utilities.NormaliseBearing(MyBot.Heading - angle);
             if (ang > 90)
             {
                 ang -= 180;
@@ -163,32 +166,12 @@ namespace MH_HiHuc.Strategies
             return dir;
         }
 
-
-
-        double NormaliseBearing(double ang)
-        {
-            if (ang > PI)
-                ang -= 2 * PI;
-            if (ang < -PI)
-                ang += 2 * PI;
-            return ang;
-        }
-
-        double NormaliseHeading(double ang)
-        {
-            if (ang > 2 * PI)
-                ang -= 2 * PI;
-            if (ang < 0)
-                ang += 2 * PI;
-            return ang;
-        }
-
-        void doFirePower()
+        private void doFirePower()
         {
             firePower = 600 / target.Distance;//selects a bullet power based on our distance away from the target
         }
 
-        void doGun()
+        private void doGun()
         {
             //works out how long it would take a bullet to travel to where the enemy is *now*
             //this is the best estimation we have
@@ -197,31 +180,53 @@ namespace MH_HiHuc.Strategies
             //offsets the gun by the angle to the next shot based on linear targeting provided by the enemy class
             var guessPosition = target.GuessPosition(time);
             double gunOffset = MyBot.GunHeadingRadians - MyBotPosition.GetBearing(guessPosition);
-            MyBot.SetTurnGunLeftRadians(NormaliseBearing(gunOffset));
+            MyBot.SetTurnGunLeftRadians(Utilities.NormaliseBearing(gunOffset));
         }
 
-        void doScanner()
+        public void OnHitByBullet(HitByBulletEvent e)
         {
-            double radarOffset;
-            if (MyBot.Time - target.Ctime > 4)
-            {   //if we haven't seen anybody for a bit....
-                radarOffset = 360;      //rotate the radar to find a target
-            }
-            else
+            BulletForces.Add(new ForcedPoint(this.MyBotPosition.X, this.MyBotPosition.Y, 5000)
             {
+                Color = Color.Red,
+                AffectTurn = 30
+            });
+        }
 
-                //next is the amount we need to rotate the radar by to scan where the target is now
-                radarOffset = MyBot.RadarHeadingRadians - MyBotPosition.GetBearing(target.X, target.Y);
+        public void OnPaint(IGraphics graphics)
+        {
+            var currentForces = new ForcedPoint[recentForces.Count];
+            recentForces.CopyTo(currentForces);
 
-                //this adds or subtracts small amounts from the bearing for the radar to produce the wobbling
-                //and make sure we don't lose the target
-                if (radarOffset < 0)
-                    radarOffset -= PI / 8;
-                else
-                    radarOffset += PI / 8;
+            foreach (var item in currentForces)
+            {
+                var pen = new Pen(item.Color);
+                var brush = new SolidBrush(item.Color);
+                var size = (float)item.Power / 50;
+                var drawPoint = new RectangleF
+                {
+                    X = (float)item.X - size / 2,
+                    Y = (float)item.Y - size / 2,
+                    Height = size,
+                    Width = size
+                };
+                graphics.DrawEllipse(pen, drawPoint);
+
+                graphics.DrawString(item.Power.ToString(), new Font(FontFamily.GenericSerif, 150, FontStyle.Bold, GraphicsUnit.Millimeter), Brushes.White, new PointF
+                {
+                    X = (float)item.X,
+                    Y = (float)item.Y
+                });
+
             }
-            //turn the radar
-            MyBot.SetTurnRadarLeftRadians(NormaliseBearing(radarOffset));
+        }
+
+        public void OnRobotDeath(RobotDeathEvent evnt)
+        {
+            MyBot.Targets[evnt.Name].Live = false;
+        }
+
+        public void OnScannedRobot(ScannedRobotEvent e)
+        {
         }
     }
 }

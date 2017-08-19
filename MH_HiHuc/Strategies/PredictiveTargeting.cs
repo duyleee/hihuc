@@ -23,11 +23,11 @@ namespace MH_HiHuc.Strategies
             }
         }
 
-        public PredictiveTargeting(AdvancedRobot robot)
+        public PredictiveTargeting(HiHucCore robot)
         {
             MyBot = robot;
         }
-        public AdvancedRobot MyBot { get; set; }
+        public HiHucCore MyBot { get; set; }
         public void Init()
         {
             target = new Enemy { Distance = 100000 };
@@ -139,6 +139,21 @@ namespace MH_HiHuc.Strategies
                 return 2.0 * Math.PI - Math.Asin(-xo / h);
             }
             return 0;
+        }
+
+        public void OnHitByBullet(HitByBulletEvent e)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnPaint(IGraphics graphics)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnRobotDeath(RobotDeathEvent evnt)
+        {
+            throw new NotImplementedException();
         }
     }
 }

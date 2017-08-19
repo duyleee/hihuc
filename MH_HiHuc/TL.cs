@@ -1,9 +1,10 @@
-﻿using Robocode;
+﻿using MH_HiHuc.Strategies.Base;
+using Robocode;
 using System;
 
 namespace MH_HiHuc
 {
-    public class TL : TeamRobot
+    public class TL : HiHucCore
     {
         
         double _randomDistance = 250;

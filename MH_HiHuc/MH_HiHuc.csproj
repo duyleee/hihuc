@@ -70,8 +70,9 @@
     <Compile Include="SS2\Hong_TrieuTuLong.cs" />
     <Compile Include="SS2\Hung_ROBO.cs" />
     <Compile Include="SS2\Hy_Robot.cs" />
-    <Compile Include="Strategies\Base\AntiGravity\GravityPoint.cs" />
+    <Compile Include="Strategies\Base\ForcedPoint.cs" />
     <Compile Include="Strategies\Base\Enemy.cs" />
+    <Compile Include="Strategies\Base\HiHucCore.cs" />
     <Compile Include="Strategies\Base\IStrategy.cs" />
     <Compile Include="Strategies\Base\PointD.cs" />
     <Compile Include="Strategies\Base\Utilities.cs" />

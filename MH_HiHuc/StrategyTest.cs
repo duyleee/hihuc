@@ -1,14 +1,11 @@
 ﻿using MH_HiHuc.Strategies;
+using MH_HiHuc.Strategies.Base;
 using Robocode;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Drawing;
 
 namespace MH_HiHuc
 {
-    public class StrategyTest: TeamRobot
+    public class StrategyTest: HiHucCore
     {
         IStrategy Stragegy { get; set; }
         public StrategyTest()
@@ -28,13 +25,30 @@ namespace MH_HiHuc
 
         public override void OnScannedRobot(ScannedRobotEvent evnt)
         {
+            base.OnScannedRobot(evnt);
             Stragegy.OnScannedRobot(evnt);
         }
 
-        public override void OnHitRobot(HitRobotEvent evnt)
+        public override void OnHitRobot(HitRobotEvent e)
         {
-            //when hit another robot, change movement, newMoment = oldMovment +- 10
+            TurnGunLeft(HeadingRadians - GunHeadingRadians + e.BearingRadians);
             Fire(3);
+        }
+
+        public override void OnHitByBullet(HitByBulletEvent evnt)
+        {
+            Stragegy.OnHitByBullet(evnt);
+        }
+
+        public override void OnPaint(IGraphics graphics)
+        {
+            Stragegy.OnPaint(graphics);
+            base.OnPaint(graphics);
+        }
+
+        public override void OnRobotDeath(RobotDeathEvent evnt)
+        {
+            Stragegy.OnRobotDeath(evnt);
         }
     }
 }

@@ -4,12 +4,20 @@ namespace MH_HiHuc.Strategies.Base
 {
     public class PointD
     {
+        public System.Drawing.Color Color { get; set; }
         public double X { get; set; }
         public double Y { get; set; }
         public PointD(double x, double y)
         {
+            Color = System.Drawing.Color.White;
             X = x;
             Y = y;
+        }
+        public PointD()
+        {
+            Color = System.Drawing.Color.White;
+            X = 0;
+            Y = 0;
         }
 
         public double Distance(double x, double y)
@@ -34,6 +42,16 @@ namespace MH_HiHuc.Strategies.Base
         public double GetBearing(PointD point)
         {
             return GetBearing(point.X, point.Y);
+        }
+
+        public PointD GetRelativePoint(double headingRadians, double bearingRadians, double distance)
+        {
+            double absbearing_rad = (headingRadians + bearingRadians) % (2 * Math.PI);
+            return new PointD
+            {
+                X = X + Math.Sin(absbearing_rad) * distance,
+                Y = Y + Math.Cos(absbearing_rad) * distance
+            };
         }
     }
 }

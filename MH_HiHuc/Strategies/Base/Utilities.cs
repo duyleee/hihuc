@@ -12,5 +12,22 @@ namespace MH_HiHuc.Strategies.Base
         {
             return (180 / Math.PI) * radians;
         }
+
+        public static double NormaliseBearing(double ang)
+        {
+            if (ang > Math.PI)
+                ang -= 2 * Math.PI;
+            if (ang < -Math.PI)
+                ang += 2 * Math.PI;
+            return ang;
+        }
+        public static double NormaliseHeading(double ang)
+        {
+            if (ang > 2 * Math.PI)
+                ang -= 2 * Math.PI;
+            if (ang < 0)
+                ang += 2 * Math.PI;
+            return ang;
+        }
     }
 }

@@ -10,6 +10,13 @@ namespace MH_HiHuc.Strategies.Base
         public double Speed { get; set; }
         public double X { get; set; }
         public double Y { get; set; }
+        public PointD Position
+        {
+            get
+            {
+                return new PointD(X, Y);
+            }
+        }
         public double Distance { get; set; }
         public double Changehead { get; set; }
         public long Ctime;
