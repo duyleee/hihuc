@@ -41,28 +41,9 @@ namespace MH_HiHuc.Strategies
             });
         }
 
-        private Enemy GetClosestTarget()
-        {
-            var _targets = new Enemy[MyBot.Targets.Values.Count];
-            MyBot.Targets.Values.CopyTo(_targets, 0);
-            var _livetargets = _targets.Where(c => c.Live && !c.IsTeamate).ToArray();
-            double closestDistance = 1000;
-            Enemy closestEnemy = null;
-            for (int i = 0; i < _livetargets.Length; i++)
-            {
-                var distance = _livetargets[i].Position.Distance(this.MyBot.Position);
-                if (distance < closestDistance)
-                {
-                    closestDistance = distance;
-                    closestEnemy = _livetargets[i];
-                }
-            }
-            return closestEnemy;
-        }
-
         public void OnScannedRobot(ScannedRobotEvent e)
         {
-            var closestEnemy = GetClosestTarget();
+            var closestEnemy = MyBot.GetClosestTarget();
             if (closestEnemy != null && closestEnemy.Name == e.Name)
             {
                 var bullerPower = 300 / e.Distance;
@@ -81,7 +62,6 @@ namespace MH_HiHuc.Strategies
         {
 
         }
-
         #region Moving
         private List<ForcedPoint> recentForces = new List<ForcedPoint>();
         double midpointstrength = 0;
@@ -184,14 +164,6 @@ namespace MH_HiHuc.Strategies
                 Height = botsize,
                 Width = botsize
             });
-        }
-
-        public void OnEnemyMessage(Enemy e)
-        {
-        }
-
-        public void OnDroidMessage(string enemyName)
-        {
         }
         #endregion
     }

@@ -127,5 +127,24 @@ namespace MH_HiHuc.Base
             Targets.Values.CopyTo(enemies, 0);
             return enemies.Count(c => c.Live && c.IsTeamate);
         }
+
+        internal Enemy GetClosestTarget()
+        {
+            var _targets = new Enemy[Targets.Values.Count];
+            Targets.Values.CopyTo(_targets, 0);
+            var _livetargets = _targets.Where(c => c.Live && !c.IsTeamate).ToArray();
+            double closestDistance = 1000;
+            Enemy closestEnemy = null;
+            for (int i = 0; i < _livetargets.Length; i++)
+            {
+                var distance = _livetargets[i].Position.Distance(this.Position);
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestEnemy = _livetargets[i];
+                }
+            }
+            return closestEnemy;
+        }
     }
 }

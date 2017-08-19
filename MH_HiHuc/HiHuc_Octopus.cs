@@ -9,11 +9,10 @@ namespace MH_HiHuc
     {
         public override void Run()
         {
-            Stragegy = new Zoombie(this);
-            Stragegy.Init();
+            Stragegy = new Meele(this);
             while (true)
             {
-                TurnGunLeftRadians(Math.PI);
+                Stragegy.Run();
             }
         }
     }
