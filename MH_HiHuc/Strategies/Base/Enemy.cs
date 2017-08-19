@@ -10,6 +10,7 @@ namespace MH_HiHuc.Strategies.Base
         public double Speed { get; set; }
         public double X { get; set; }
         public double Y { get; set; }
+        public bool IsTeamate { get; set; }
         public PointD Position
         {
             get

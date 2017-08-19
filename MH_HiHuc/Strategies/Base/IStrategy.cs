@@ -9,9 +9,9 @@ namespace MH_HiHuc.Strategies
         void Init();
         void Run();
         void OnScannedRobot(ScannedRobotEvent e);
+        void OnEnemyMessage(Enemy e);
         void OnHitByBullet(HitByBulletEvent e);
-        void OnPaint(IGraphics graphics);
-        void OnRobotDeath(RobotDeathEvent evnt);
+        void OnPaint(IGraphics graphics);        
         void OnHitRobot(HitRobotEvent evnt);
     }
 }

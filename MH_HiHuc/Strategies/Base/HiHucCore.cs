@@ -1,36 +1,31 @@
 ﻿using Robocode;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using System.Linq;
 
 namespace MH_HiHuc.Strategies.Base
 {
     public class HiHucCore : TeamRobot
     {
-        internal Dictionary<string, Enemy> Targets = new Dictionary<string, Enemy>(); 
-
+        internal Dictionary<string, Enemy> Targets = new Dictionary<string, Enemy>();
+        internal IStrategy Stragegy { get; set; }
         internal PointD Position
         {
             get
             {
-                return new PointD
-                {
-                    X = this.X,
-                    Y = this.Y
-                };
+                return new PointD(X, Y);
             }
         }
 
-        //public HiHucCore()
-        //{
-        //    Color bodyColor = ColorTranslator.FromHtml("#816ea5");
-        //    SetColors(bodyColor, Color.BlueViolet, Color.Cyan);
-        //}
-
         public override void OnScannedRobot(ScannedRobotEvent e)
         {
-            if (Targets == null) { Targets = new Dictionary<string, Base.Enemy>(); }
+            TrackEnemy(e);
+            
+            Stragegy.OnScannedRobot(e);
+        }
 
+        private void TrackEnemy(ScannedRobotEvent e)
+        {
             if (!Targets.ContainsKey(e.Name))
             {
                 var enemy = new Enemy();
@@ -51,6 +46,29 @@ namespace MH_HiHuc.Strategies.Base
             Targets[e.Name].Speed = e.Velocity;
             Targets[e.Name].Distance = e.Distance;
             Targets[e.Name].Live = true;
+            Targets[e.Name].IsTeamate = IsTeammate(e.Name);
+            BroadcastMessage(Targets[e.Name]);
+        }
+
+        public override void OnRobotDeath(RobotDeathEvent evnt)
+        {
+            Targets[evnt.Name].Live = false;
+        }
+
+        public override void OnHitRobot(HitRobotEvent e)
+        {
+            Stragegy.OnHitRobot(e);
+        }
+
+        public override void OnHitByBullet(HitByBulletEvent evnt)
+        {
+            Stragegy.OnHitByBullet(evnt);
+        }
+
+        public override void OnPaint(IGraphics graphics)
+        {
+            Stragegy.OnPaint(graphics);
+            base.OnPaint(graphics);
         }
 
         internal void GotoPoint(PointD point)
@@ -82,6 +100,24 @@ namespace MH_HiHuc.Strategies.Base
             }
             SetTurnLeft(ang);
             return dir;
+        }
+
+        internal int EnemyCount()
+        {
+            Enemy[] enemies = new Enemy[Targets.Values.Count];
+            Targets.Values.CopyTo(enemies, 0);
+            return enemies.Count(c => c.Live && !c.IsTeamate);
+        }
+
+        public override void OnMessageReceived(MessageEvent evnt)
+        {
+            // Only process for droid
+            if (this is IDroid)
+            {
+                var enemy = (Enemy)evnt.Message;
+                Targets[enemy.Name] = enemy;
+                Stragegy.OnEnemyMessage(enemy);
+            }
         }
     }
 }

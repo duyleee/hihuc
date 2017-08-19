@@ -45,7 +45,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PredictiveTargetingTest.cs" />
+    <Compile Include="HiHuc_DA.cs" />
+    <Compile Include="HiHuc_MegaTron.cs" />
+    <Compile Include="HiHuc_Oka.cs" />
+    <Compile Include="HiHuc_Autobot.cs" />
+    <Compile Include="Ref\PredictiveTargetingTest.cs" />
     <Compile Include="Sample\AeroDaltonImperial.cs" />
     <Compile Include="Sample\Common\EnemyData.cs" />
     <Compile Include="Sample\Common\Enums.cs" />
@@ -78,8 +82,8 @@
     <Compile Include="Strategies\Base\Utilities.cs" />
     <Compile Include="Strategies\Meele.cs" />
     <Compile Include="Strategies\PredictiveTargeting.cs" />
-    <Compile Include="StrategyTest.cs" />
-    <Compile Include="TL.cs" />
+    <Compile Include="Strategies\Solo.cs" />
+    <Compile Include="HiHuc_TL.cs" />
     <Compile Include="SS2\Lewis_AAA.cs" />
     <Compile Include="SS2\Luan_Quasimodo.cs" />
     <Compile Include="SS2\Luyen_LuckyGuy.cs" />
@@ -94,6 +98,7 @@
     <Compile Include="SS2\Tran_Strongmek007.cs" />
     <Compile Include="SS2\Tri_DieHard.cs" />
     <Compile Include="SS2\TuanDo.cs" />
+    <Compile Include="Strategies\Zoombie.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

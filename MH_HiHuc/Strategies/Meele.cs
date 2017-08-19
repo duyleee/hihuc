@@ -3,17 +3,14 @@ using Robocode;
 using MH_HiHuc.Strategies.Base;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Collections;
+using System.Linq;
+using Robocode.Util;
 
 namespace MH_HiHuc.Strategies
 {
     public class Meele : IStrategy
     {
         public HiHucCore MyBot { get; set; }
-
-        
-        
-        
         List<ForcedPoint> BulletForces = new List<ForcedPoint>();
         public Meele(HiHucCore robot)
         {
@@ -32,20 +29,50 @@ namespace MH_HiHuc.Strategies
             MyBot.SetTurnRadarLeftRadians(2 * Math.PI);
             MyBot.Execute();
         }
-
-        public void OnRobotDeath(RobotDeathEvent evnt)
-        {
-            MyBot.Targets[evnt.Name].Live = false;
-        }
-
+        
         public void OnHitByBullet(HitByBulletEvent e)
         {
-          
+            BulletForces.Add(new ForcedPoint(this.MyBot.Position.X, this.MyBot.Position.Y, 5000)
+            {
+                Color = Color.Red,
+                AffectTurn = 30
+            });
+        }
+
+        private Enemy GetClosestTarget()
+        {
+            var _targets = new Enemy[MyBot.Targets.Values.Count];
+            MyBot.Targets.Values.CopyTo(_targets, 0);
+            var _livetargets = _targets.Where(c => c.Live && !c.IsTeamate).ToArray();
+            double closestDistance = 1000;
+            Enemy closestEnemy = null;
+            for (int i = 0; i < _livetargets.Length; i++)
+            {
+                var distance = _livetargets[i].Position.Distance(this.MyBot.Position);
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestEnemy = _livetargets[i];
+                }
+            }
+            return closestEnemy;
         }
 
         public void OnScannedRobot(ScannedRobotEvent e)
         {
+            var closestEnemy = GetClosestTarget();
+            if (closestEnemy != null && closestEnemy.Name == e.Name)
+            {
+                var bullerPower = 300 / e.Distance;
 
+                //simplest linear targeting algorithm - http://robowiki.net/wiki/Linear_Targeting
+                double absoluteBearing = MyBot.HeadingRadians + e.BearingRadians;
+                MyBot.SetTurnGunRightRadians(Utils.NormalRelativeAngle(absoluteBearing -
+                               MyBot.GunHeadingRadians + (e.Velocity * Math.Sin(e.HeadingRadians -
+                               absoluteBearing) / Rules.GetBulletSpeed(bullerPower))));
+
+                MyBot.SetFire(bullerPower);
+            }
         }
 
         public void OnHitRobot(HitRobotEvent evnt)
@@ -53,6 +80,7 @@ namespace MH_HiHuc.Strategies
 
         }
 
+        #region Moving
         private List<ForcedPoint> recentForces = new List<ForcedPoint>();
         double midpointstrength = 0;
         int midpointcount = 0;
@@ -69,7 +97,7 @@ namespace MH_HiHuc.Strategies
             {
                 if (tank.Live == true)
                 {
-                    var tankForce = new ForcedPoint(tank.X, tank.Y, 5000);
+                    var tankForce = new ForcedPoint(tank.X, tank.Y, tank.IsTeamate ? 3000 : 5000);
                     recentForces.Add(tankForce);
                     nextPosition = tankForce.Force(nextPosition);
                 }
@@ -116,6 +144,7 @@ namespace MH_HiHuc.Strategies
             //Move in the direction of our resolved force.
             MyBot.GotoPoint(nextPosition);
         }
+        #endregion
 
         #region Debugging
         public void OnPaint(IGraphics graphics)
@@ -153,6 +182,10 @@ namespace MH_HiHuc.Strategies
                 Height = botsize,
                 Width = botsize
             });
+        }
+
+        public void OnEnemyMessage(Enemy e)
+        {
         }
         #endregion
     }

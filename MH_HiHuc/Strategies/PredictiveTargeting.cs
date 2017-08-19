@@ -160,5 +160,10 @@ namespace MH_HiHuc.Strategies
         {
             throw new NotImplementedException();
         }
+
+        public void OnEnemyMessage(Enemy e)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
