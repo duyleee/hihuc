@@ -36,23 +36,26 @@ namespace MH_HiHuc.Base
             double absbearing_rad = (this.HeadingRadians + e.BearingRadians) % (2 * Math.PI);
             //this section sets all the information about our target
             Targets[e.Name].Name = e.Name;
-            double h = Utilities.NormaliseBearing(e.HeadingRadians - Targets[e.Name].Heading);
-            h = h / (this.Time - Targets[e.Name].Ctime);
-            Targets[e.Name].Changehead = h;
-            Targets[e.Name].X = this.X + Math.Sin(absbearing_rad) * e.Distance; //works out the x coordinate of where the target is
-            Targets[e.Name].Y = this.Y + Math.Cos(absbearing_rad) * e.Distance; //works out the y coordinate of where the target is
-            Targets[e.Name].Bearing = e.BearingRadians;
-            Targets[e.Name].Heading = e.HeadingRadians;
-            Targets[e.Name].Ctime = this.Time;               //game time at which this scan was produced
-            Targets[e.Name].Speed = e.Velocity;
-            Targets[e.Name].Distance = e.Distance;
+            Targets[e.Name].X = this.X + Math.Sin(absbearing_rad) * e.Distance;
+            Targets[e.Name].Y = this.Y + Math.Cos(absbearing_rad) * e.Distance;
             Targets[e.Name].Live = true;
+            Targets[e.Name].Energy = e.Energy;
             Targets[e.Name].IsTeamate = IsTeammate(e.Name);
 
-            // Send enemy to droid
+            // Update enemy location to teamate
             if (!Targets[e.Name].IsTeamate)
             {
                 BroadcastMessage(Targets[e.Name]);
+            }
+        }
+
+        public override void OnMessageReceived(MessageEvent evnt)
+        {
+            if (evnt.Message is Enemy)
+            {
+                var enemy = (Enemy)evnt.Message;
+                Targets[enemy.Name] = enemy;
+                Stragegy.OnEnemyMessage(enemy);
             }
         }
 
@@ -83,7 +86,6 @@ namespace MH_HiHuc.Base
 
         internal void GotoPoint(PointD point)
         {
-            Console.WriteLine("Going to " + point.X + "," + point.Y);
             double dist = 20;
             double angle = Utilities.RadiansToDegrees(Position.GetBearing(point));
             double r = TurnByDegrees(angle);
@@ -124,16 +126,6 @@ namespace MH_HiHuc.Base
             Enemy[] enemies = new Enemy[Targets.Values.Count];
             Targets.Values.CopyTo(enemies, 0);
             return enemies.Count(c => c.Live && c.IsTeamate);
-        }
-
-        public override void OnMessageReceived(MessageEvent evnt)
-        {
-            if (evnt.Message is Enemy)
-            {
-                var enemy = (Enemy)evnt.Message;
-                Targets[enemy.Name] = enemy;
-                Stragegy.OnEnemyMessage(enemy);
-            }
         }
     }
 }
