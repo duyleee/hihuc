@@ -155,5 +155,10 @@ namespace MH_HiHuc.Strategies
         {
             throw new NotImplementedException();
         }
+
+        public void OnHitRobot(HitRobotEvent evnt)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

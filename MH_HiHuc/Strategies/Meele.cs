@@ -3,52 +3,17 @@ using Robocode;
 using MH_HiHuc.Strategies.Base;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Collections;
 
 namespace MH_HiHuc.Strategies
 {
     public class Meele : IStrategy
     {
         public HiHucCore MyBot { get; set; }
-        public PointD MyBotPosition
-        {
-            get
-            {
-                return new PointD(MyBot.X, MyBot.Y);
-            }
-        }
 
-        Enemy _target;
-        private Enemy target
-        {
-            get
-            {
-                if (_target == null || _target.Live == false || MyBot.Targets[_target.Name].Live == false)
-                {
-                    var currentTargets = new Enemy[MyBot.Targets.Values.Count];
-                    MyBot.Targets.Values.CopyTo(currentTargets, 0);
-                    double closestDistance = 1000;
-                    for (int i = 0; i < currentTargets.Length; i++)
-                    {
-                        var _distance = currentTargets[i].Position.Distance(MyBotPosition);
-                        if (_distance < closestDistance)
-                        {
-                            closestDistance = _distance;
-                            _target = currentTargets[i];
-                        }
-                    }
-
-                }
-                return _target != null ? _target : new Enemy()
-                {
-                    Live = false
-                };
-            }
-        }
-        double PI = Math.PI;
-        double midpointstrength = 0;
-        int midpointcount = 0;
-        Random randomizer = new Random();
-        double firePower;
+        
+        
+        
         List<ForcedPoint> BulletForces = new List<ForcedPoint>();
         public Meele(HiHucCore robot)
         {
@@ -64,18 +29,38 @@ namespace MH_HiHuc.Strategies
         public void Run()
         {
             ForceMoving();
-            MyBot.SetTurnRadarLeftRadians(2 * PI);
-            doFirePower();
-            doGun();
-            MyBot.Fire(firePower);
+            MyBot.SetTurnRadarLeftRadians(2 * Math.PI);
             MyBot.Execute();
         }
 
+        public void OnRobotDeath(RobotDeathEvent evnt)
+        {
+            MyBot.Targets[evnt.Name].Live = false;
+        }
+
+        public void OnHitByBullet(HitByBulletEvent e)
+        {
+          
+        }
+
+        public void OnScannedRobot(ScannedRobotEvent e)
+        {
+
+        }
+
+        public void OnHitRobot(HitRobotEvent evnt)
+        {
+
+        }
+
         private List<ForcedPoint> recentForces = new List<ForcedPoint>();
+        double midpointstrength = 0;
+        int midpointcount = 0;
+        Random randomizer = new Random();
         private void ForceMoving()
         {
             recentForces.Clear();
-            PointD nextPosition = MyBotPosition;
+            PointD nextPosition = MyBot.Position;
             Enemy[] enemies = new Enemy[MyBot.Targets.Values.Count];
             MyBot.Targets.Values.CopyTo(enemies, 0);
 
@@ -129,69 +114,10 @@ namespace MH_HiHuc.Strategies
             #endregion
 
             //Move in the direction of our resolved force.
-            GotoPoint(nextPosition);
+            MyBot.GotoPoint(nextPosition);
         }
 
-        /**Move towards an x and y coordinate**/
-        private void GotoPoint(PointD point)
-        {
-            Console.WriteLine("Going to " + point.X + "," + point.Y);
-            double dist = 20;
-            double angle = Utilities.RadiansToDegrees(MyBotPosition.GetBearing(point));
-            double r = TurnByDegrees(angle);
-            MyBot.SetAhead(dist * r);
-        }
-
-        /**Turns the shortest angle possible to come to a heading, then returns the direction the
-	       the bot needs to move in.**/
-        private int TurnByDegrees(double angle)
-        {
-            double ang;
-            int dir;
-            ang = Utilities.NormaliseBearing(MyBot.Heading - angle);
-            if (ang > 90)
-            {
-                ang -= 180;
-                dir = -1;
-            }
-            else if (ang < -90)
-            {
-                ang += 180;
-                dir = -1;
-            }
-            else {
-                dir = 1;
-            }
-            MyBot.SetTurnLeft(ang);
-            return dir;
-        }
-
-        private void doFirePower()
-        {
-            firePower = 600 / target.Distance;//selects a bullet power based on our distance away from the target
-        }
-
-        private void doGun()
-        {
-            //works out how long it would take a bullet to travel to where the enemy is *now*
-            //this is the best estimation we have
-            long time = MyBot.Time + (int)(target.Distance / (20 - (3 * firePower)));
-
-            //offsets the gun by the angle to the next shot based on linear targeting provided by the enemy class
-            var guessPosition = target.GuessPosition(time);
-            double gunOffset = MyBot.GunHeadingRadians - MyBotPosition.GetBearing(guessPosition);
-            MyBot.SetTurnGunLeftRadians(Utilities.NormaliseBearing(gunOffset));
-        }
-
-        public void OnHitByBullet(HitByBulletEvent e)
-        {
-            BulletForces.Add(new ForcedPoint(this.MyBotPosition.X, this.MyBotPosition.Y, 5000)
-            {
-                Color = Color.Red,
-                AffectTurn = 30
-            });
-        }
-
+        #region Debugging
         public void OnPaint(IGraphics graphics)
         {
             var currentForces = new ForcedPoint[recentForces.Count];
@@ -218,15 +144,16 @@ namespace MH_HiHuc.Strategies
                 });
 
             }
-        }
 
-        public void OnRobotDeath(RobotDeathEvent evnt)
-        {
-            MyBot.Targets[evnt.Name].Live = false;
+            var botsize = 100;
+            graphics.DrawEllipse(Pens.RoyalBlue, new RectangleF
+            {
+                X = (float)MyBot.X - botsize / 2,
+                Y = (float)MyBot.Y - botsize / 2,
+                Height = botsize,
+                Width = botsize
+            });
         }
-
-        public void OnScannedRobot(ScannedRobotEvent e)
-        {
-        }
+        #endregion
     }
 }

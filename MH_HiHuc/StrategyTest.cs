@@ -31,8 +31,7 @@ namespace MH_HiHuc
 
         public override void OnHitRobot(HitRobotEvent e)
         {
-            TurnGunLeft(HeadingRadians - GunHeadingRadians + e.BearingRadians);
-            Fire(3);
+            Stragegy.OnHitRobot(e);
         }
 
         public override void OnHitByBullet(HitByBulletEvent evnt)

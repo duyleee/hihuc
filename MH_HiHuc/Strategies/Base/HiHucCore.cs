@@ -9,6 +9,18 @@ namespace MH_HiHuc.Strategies.Base
     {
         internal Dictionary<string, Enemy> Targets = new Dictionary<string, Enemy>(); 
 
+        internal PointD Position
+        {
+            get
+            {
+                return new PointD
+                {
+                    X = this.X,
+                    Y = this.Y
+                };
+            }
+        }
+
         //public HiHucCore()
         //{
         //    Color bodyColor = ColorTranslator.FromHtml("#816ea5");
@@ -39,6 +51,37 @@ namespace MH_HiHuc.Strategies.Base
             Targets[e.Name].Speed = e.Velocity;
             Targets[e.Name].Distance = e.Distance;
             Targets[e.Name].Live = true;
+        }
+
+        internal void GotoPoint(PointD point)
+        {
+            Console.WriteLine("Going to " + point.X + "," + point.Y);
+            double dist = 20;
+            double angle = Utilities.RadiansToDegrees(Position.GetBearing(point));
+            double r = TurnByDegrees(angle);
+            SetAhead(dist * r);
+        }
+
+        internal int TurnByDegrees(double angle)
+        {
+            double ang;
+            int dir;
+            ang = Utilities.NormaliseBearing(Heading - angle);
+            if (ang > 90)
+            {
+                ang -= 180;
+                dir = -1;
+            }
+            else if (ang < -90)
+            {
+                ang += 180;
+                dir = -1;
+            }
+            else {
+                dir = 1;
+            }
+            SetTurnLeft(ang);
+            return dir;
         }
     }
 }
