@@ -2,6 +2,7 @@
 
 namespace MH_HiHuc.Strategies.Base
 {
+    [Serializable()]
     public class Enemy
     {
         public string Name { get; set; }

@@ -1,6 +1,8 @@
 ﻿using System;
 using MH_HiHuc.Strategies.Base;
 using Robocode;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace MH_HiHuc.Strategies
 {
@@ -10,42 +12,48 @@ namespace MH_HiHuc.Strategies
 
         public Zoombie(HiHucCore bot)
         {
-            this.MyBot = bot;
+            MyBot = bot;
         }
 
+        Enemy myEnemy;
         public void OnEnemyMessage(Enemy e)
         {
-            MyBot.GotoPoint(e.Position);
+            if ((myEnemy == null || MyBot.Targets[myEnemy.Name].Live == false))
+            {
+                myEnemy = e;
+            }
         }
 
         public void Init()
         {
-            
+            MyBot.IsAdjustGunForRobotTurn = true;
+            Color col = ColorTranslator.FromHtml("#816ea5");
+            MyBot.SetColors(col, Color.BlueViolet, Color.DarkCyan);
         }
 
         public void OnHitByBullet(HitByBulletEvent e)
         {
-            
+
         }
 
         public void OnHitRobot(HitRobotEvent evnt)
         {
-           
+
         }
 
         public void OnPaint(IGraphics graphics)
         {
-            
+
         }
-        
+
         public void OnScannedRobot(ScannedRobotEvent e)
         {
-            
+
         }
 
         public void Run()
         {
-            throw new NotImplementedException();
+            
         }
 
         

@@ -20,7 +20,7 @@ namespace MH_HiHuc.Strategies.Base
         public override void OnScannedRobot(ScannedRobotEvent e)
         {
             TrackEnemy(e);
-            
+
             Stragegy.OnScannedRobot(e);
         }
 
@@ -47,12 +47,21 @@ namespace MH_HiHuc.Strategies.Base
             Targets[e.Name].Distance = e.Distance;
             Targets[e.Name].Live = true;
             Targets[e.Name].IsTeamate = IsTeammate(e.Name);
-            BroadcastMessage(Targets[e.Name]);
+
+            // Send enemy to droid
+            if (!Targets[e.Name].IsTeamate)
+            {
+                BroadcastMessage(Targets[e.Name]);
+            }
         }
 
         public override void OnRobotDeath(RobotDeathEvent evnt)
         {
-            Targets[evnt.Name].Live = false;
+            if (Targets.ContainsKey(evnt.Name))
+            {
+                Targets[evnt.Name].Live = false;
+            }
+
         }
 
         public override void OnHitRobot(HitRobotEvent e)
@@ -109,10 +118,16 @@ namespace MH_HiHuc.Strategies.Base
             return enemies.Count(c => c.Live && !c.IsTeamate);
         }
 
+        internal int TeamCount()
+        {
+            Enemy[] enemies = new Enemy[Targets.Values.Count];
+            Targets.Values.CopyTo(enemies, 0);
+            return enemies.Count(c => c.Live && c.IsTeamate);
+        }
+
         public override void OnMessageReceived(MessageEvent evnt)
         {
-            // Only process for droid
-            if (this is IDroid)
+            if (evnt.Message is Enemy)
             {
                 var enemy = (Enemy)evnt.Message;
                 Targets[enemy.Name] = enemy;

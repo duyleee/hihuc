@@ -143,27 +143,26 @@ namespace MH_HiHuc.Strategies
 
         public void OnHitByBullet(HitByBulletEvent e)
         {
-            throw new NotImplementedException();
         }
 
         public void OnPaint(IGraphics graphics)
         {
-            throw new NotImplementedException();
         }
 
         public void OnRobotDeath(RobotDeathEvent evnt)
         {
-            throw new NotImplementedException();
         }
 
         public void OnHitRobot(HitRobotEvent evnt)
         {
-            throw new NotImplementedException();
         }
 
         public void OnEnemyMessage(Enemy e)
         {
-            throw new NotImplementedException();
+        }
+
+        public void OnDroidMessage(string enemyName)
+        {
         }
     }
 }

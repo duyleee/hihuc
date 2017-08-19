@@ -46,7 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HiHuc_DA.cs" />
-    <Compile Include="HiHuc_MegaTron.cs" />
+    <Compile Include="HiHuc_Octopus.cs" />
     <Compile Include="HiHuc_Oka.cs" />
     <Compile Include="HiHuc_Autobot.cs" />
     <Compile Include="Ref\PredictiveTargetingTest.cs" />

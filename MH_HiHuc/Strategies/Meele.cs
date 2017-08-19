@@ -18,6 +18,9 @@ namespace MH_HiHuc.Strategies
         }
         public void Init()
         {
+            Color col = ColorTranslator.FromHtml("#816ea5");
+            MyBot.SetColors(col, Color.Red, Color.DarkCyan);
+
             MyBot.IsAdjustGunForRobotTurn = true;
             MyBot.IsAdjustRadarForGunTurn = true;
             MyBot.TurnRadarRightRadians(2 * Math.PI);
@@ -185,6 +188,10 @@ namespace MH_HiHuc.Strategies
         }
 
         public void OnEnemyMessage(Enemy e)
+        {
+        }
+
+        public void OnDroidMessage(string enemyName)
         {
         }
         #endregion

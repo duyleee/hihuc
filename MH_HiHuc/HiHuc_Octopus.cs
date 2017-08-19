@@ -5,7 +5,7 @@ using System;
 
 namespace MH_HiHuc
 {
-    public class HiHuc_Autobot: HiHucCore, IDroid
+    public class HiHuc_Octopus : HiHucCore, IDroid
     {
         public override void Run()
         {

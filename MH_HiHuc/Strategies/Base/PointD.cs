@@ -2,8 +2,9 @@
 
 namespace MH_HiHuc.Strategies.Base
 {
+    [Serializable()]
     public class PointD
-    {
+    {        
         public System.Drawing.Color Color { get; set; }
         public double X { get; set; }
         public double Y { get; set; }

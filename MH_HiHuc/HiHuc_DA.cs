@@ -27,7 +27,7 @@ namespace MH_HiHuc
         public override void OnRobotDeath(RobotDeathEvent evnt)
         {
             base.OnRobotDeath(evnt);
-            if (EnemyCount() <= 2 && !(Stragegy is Solo))
+            if (EnemyCount() <= 2 && TeamCount() <= 1 && !(Stragegy is Solo))
             {
                 // Big boss come last
                 Stragegy = new Solo(this);
