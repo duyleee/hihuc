@@ -71,31 +71,31 @@ namespace MH_HiHuc.Strategies
 
         public override void OnHitRobot(HitRobotEvent e)
         {
+            if (MyBot.IsTeammate(e.Name))
+            {
+                return;
+            }
             MyBot.TurnRight(e.Bearing);
             double absoluteBearing = MyBot.HeadingRadians + e.BearingRadians;
             MyBot.TurnGunRightRadians(Utils.NormalRelativeAngle(absoluteBearing - MyBot.GunHeadingRadians));
 
-            if (e.Energy > 16)
+            MyBot.Ahead(100);
+            MyBot.Fire(3);
+        }
+
+        public override void OnHitByBullet(HitByBulletEvent e)
+        {
+            base.OnHitByBullet(e);
+            if (MyBot.IsTeammate(e.Name))
             {
-                MyBot.Fire(3);
+                return;
             }
-            else if (e.Energy > 10)
-            {
-                MyBot.Fire(2);
-            }
-            else if (e.Energy > 4)
-            {
-                MyBot.Fire(1);
-            }
-            else if (e.Energy > 2)
-            {
-                MyBot.Fire(.5);
-            }
-            else if (e.Energy > .4)
-            {
-                MyBot.Fire(.1);
-            }
-            MyBot.Ahead(40); // Ram him again!
+            MyBot.TurnRight(e.Bearing);
+            double absoluteBearing = MyBot.HeadingRadians + e.BearingRadians;
+            MyBot.TurnGunRightRadians(Utils.NormalRelativeAngle(absoluteBearing - MyBot.GunHeadingRadians));
+
+            MyBot.Ahead(100);
+            MyBot.Fire(3);
         }
     }
 }
