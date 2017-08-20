@@ -9,7 +9,7 @@ namespace MH_HiHuc
         public override void Run()
         {
             //Start as zoombie to find way to enemy, prevent attach teamate
-            Stragegy = new Zoombie(this);
+            Stragegy = new RamBot(this);
             Stragegy.Init();
             while (true)
             {
