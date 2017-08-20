@@ -22,12 +22,14 @@ namespace MH_HiHuc.Strategies
             MyBot.IsAdjustGunForRobotTurn = true;
         }
 
+        private string currentTarget = string.Empty;
         public void OnScannedRobot(ScannedRobotEvent e)
         {
             if (MyBot.IsTeammate(e.Name))
             {
                 return;
             }
+            currentTarget = e.Name;
             Move(e);
             RadarAdjust(e);
             Fire(e);
@@ -46,7 +48,7 @@ namespace MH_HiHuc.Strategies
                 MyBot.SetAhead(randomDistance * moveDirection);
             }
 
-            int distantCoefficient = (e.Distance > 150.0) ? 1 : -1;
+            int distantCoefficient = (e.Distance > 70) ? 1 : -1;
             double coefficientAngel = Math.PI / randomTurnFactor;
             randomTurnFactor++;
             if (randomTurnFactor >= 7)
@@ -117,7 +119,50 @@ namespace MH_HiHuc.Strategies
 
         public void OnPaint(IGraphics graphics)
         {
+            if (!string.IsNullOrEmpty(currentTarget) && MyBot.Targets.ContainsKey(currentTarget))
+            {
+                var enemy = MyBot.Targets[currentTarget];
+                var myBotX = MyBot.Position.X;
+                var myBotY = MyBot.Position.Y;
 
+                //line to enemy
+                graphics.DrawLine(Pens.Red, (float)enemy.X, (float)enemy.Y, (float)myBotX, (float)myBotY);
+
+                //highlight enemy
+                graphics.DrawEllipse(Pens.Red, new RectangleF
+                {
+                    X = (float)enemy.X - 50,
+                    Y = (float)enemy.Y - 50,
+                    Height = 100,
+                    Width = 100
+                });
+
+                //90o line with enemy line
+                var distance = enemy.Position.Distance(MyBot.Position) + 50;
+                var angLeft = Utilities.NormaliseBearing(MyBot.Position.GetBearing(enemy.Position) + Math.PI/2);
+                var angRight = Utilities.NormaliseBearing(MyBot.Position.GetBearing(enemy.Position) - Math.PI/2);
+                var pointSize = 10;
+                
+                var startX = myBotX + Math.Sin(angLeft) * distance;
+                var startY = myBotY + Math.Cos(angLeft) * distance;
+                var endX = myBotX + Math.Sin(angRight) * distance;
+                var endY = myBotY + Math.Cos(angRight) * distance;
+                graphics.DrawEllipse(Pens.Red, new RectangleF
+                {
+                    X = (float)startX - pointSize / 2,
+                    Y = (float)startY - pointSize / 2,
+                    Height = pointSize,
+                    Width = pointSize
+                });
+                graphics.DrawEllipse(Pens.Red, new RectangleF
+                {
+                    X = (float)endX - pointSize / 2,
+                    Y = (float)endY - pointSize / 2,
+                    Height = pointSize,
+                    Width = pointSize
+                });
+                graphics.DrawLine(Pens.Red, (float)startX, (float)startY, (float)endX, (float)endY);
+            }
         }
     }
 }
