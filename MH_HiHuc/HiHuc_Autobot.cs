@@ -1,7 +1,6 @@
 ﻿using MH_HiHuc.Strategies;
 using MH_HiHuc.Base;
 using Robocode;
-using System;
 
 namespace MH_HiHuc
 {
@@ -24,7 +23,7 @@ namespace MH_HiHuc
             base.OnHitRobot(e);
             if (!IsTeammate(e.Name))
             {
-                Stragegy = new SuperRamFire(this);
+                Stragegy = new RamBot(this);
                 Stragegy.Init();
             }
         }

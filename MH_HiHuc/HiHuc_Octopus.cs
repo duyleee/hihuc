@@ -23,7 +23,7 @@ namespace MH_HiHuc
             base.OnHitRobot(e);
             if (!IsTeammate(e.Name))
             {
-                Stragegy = new SuperRamFire(this);
+                Stragegy = new RamBot(this);
                 Stragegy.Init();
             }
         }        

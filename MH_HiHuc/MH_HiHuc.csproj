@@ -56,8 +56,7 @@
     <Compile Include="Base\IStrategy.cs" />
     <Compile Include="Base\PointD.cs" />
     <Compile Include="Base\Utilities.cs" />
-    <Compile Include="Strategies\RamFire.cs" />
-    <Compile Include="Strategies\SuperRamFire.cs" />
+    <Compile Include="Strategies\RamBot.cs" />
     <Compile Include="Strategies\Zoombie.cs" />
     <Compile Include="Strategies\Meele.cs" />
     <Compile Include="Strategies\Solo.cs" />
