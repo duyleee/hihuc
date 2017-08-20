@@ -88,6 +88,15 @@ namespace MH_HiHuc.Base
             base.OnPaint(graphics);
         }
 
+        public override void OnBulletHit(BulletHitEvent e)
+        {
+            Stragegy.OnBulletHit(e);
+        }
+        public override void OnHitWall(HitWallEvent e)
+        {
+            Stragegy.OnHitWall(e);
+        }
+
         internal void GotoPoint(PointD point)
         {
             double dist = 20;

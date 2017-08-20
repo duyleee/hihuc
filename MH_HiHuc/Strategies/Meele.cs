@@ -8,15 +8,14 @@ using Robocode.Util;
 
 namespace MH_HiHuc.Strategies
 {
-    public class Meele : IStrategy
+    public class Meele : StrategyBase, IStrategy
     {
-        public HiHucCore MyBot { get; set; }
         public List<ForcedPoint> BulletForces = new List<ForcedPoint>();
         public Meele(HiHucCore robot)
         {
             MyBot = robot;
         }
-        public void Init()
+        public override void Init()
         {
             MyBot.SetColors(Utilities.GetTeamColor(), Color.Red, Color.DarkCyan);
 
@@ -25,14 +24,14 @@ namespace MH_HiHuc.Strategies
             MyBot.TurnRadarRightRadians(2 * Math.PI);
         }
 
-        public void Run()
+        public override void Run()
         {
             ForceMoving();
             MyBot.SetTurnRadarLeftRadians(2 * Math.PI);
             MyBot.Execute();
         }
 
-        public virtual void OnHitByBullet(HitByBulletEvent e)
+        public override void OnHitByBullet(HitByBulletEvent e)
         {
             BulletForces.Add(new ForcedPoint(this.MyBot.Position.X, this.MyBot.Position.Y, 5000)
             {
@@ -41,7 +40,7 @@ namespace MH_HiHuc.Strategies
             });
         }
 
-        public void OnScannedRobot(ScannedRobotEvent e)
+        public override void OnScannedRobot(ScannedRobotEvent e)
         {
             var closestEnemy = MyBot.GetClosestTarget();
             if (closestEnemy != null && closestEnemy.Name == e.Name)
@@ -58,10 +57,6 @@ namespace MH_HiHuc.Strategies
             }
         }
 
-        public virtual void OnHitRobot(HitRobotEvent evnt)
-        {
-
-        }
         #region Moving
         private List<ForcedPoint> recentForces = new List<ForcedPoint>();
         double midpointstrength = 0;
@@ -155,7 +150,7 @@ namespace MH_HiHuc.Strategies
         #endregion
 
         #region Debugging
-        public void OnPaint(IGraphics graphics)
+        public override void OnPaint(IGraphics graphics)
         {
             var currentForces = new ForcedPoint[recentForces.Count];
             recentForces.CopyTo(currentForces);
@@ -193,9 +188,5 @@ namespace MH_HiHuc.Strategies
             });
         }
         #endregion
-
-        public virtual void OnEnemyMessage(Enemy e)
-        {
-        }
     }
 }

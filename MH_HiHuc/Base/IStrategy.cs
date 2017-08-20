@@ -13,5 +13,7 @@ namespace MH_HiHuc.Strategies
         void OnHitByBullet(HitByBulletEvent e);
         void OnPaint(IGraphics graphics);        
         void OnHitRobot(HitRobotEvent evnt);
+        void OnBulletHit(BulletHitEvent e);
+        void OnHitWall(HitWallEvent e);
     }
 }

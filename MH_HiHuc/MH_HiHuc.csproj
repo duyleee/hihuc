@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Base\StrategyBase.cs" />
     <Compile Include="HiHuc_DA.cs" />
     <Compile Include="HiHuc_Octopus.cs" />
     <Compile Include="HiHuc_Oka.cs" />
@@ -55,6 +56,8 @@
     <Compile Include="Base\IStrategy.cs" />
     <Compile Include="Base\PointD.cs" />
     <Compile Include="Base\Utilities.cs" />
+    <Compile Include="Strategies\RamFire.cs" />
+    <Compile Include="Strategies\SuperRamFire.cs" />
     <Compile Include="Strategies\Zoombie.cs" />
     <Compile Include="Strategies\Meele.cs" />
     <Compile Include="Strategies\Solo.cs" />

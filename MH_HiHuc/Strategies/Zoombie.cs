@@ -3,6 +3,7 @@ using Robocode;
 using MH_HiHuc.Base;
 using System.Collections.Generic;
 using Robocode.Util;
+using System.Drawing;
 
 namespace MH_HiHuc.Strategies
 {
@@ -12,13 +13,18 @@ namespace MH_HiHuc.Strategies
         {
         }
 
-        public override void OnEnemyMessage(Enemy e)
+        public override void Init()
         {
+            base.Init();
+            MyBot.SetColors(Utilities.GetTeamColor(), Color.White, Color.White);
         }
+
 
         double midpointstrength = 0;
         int midpointcount = 0;
         Random randomizer = new Random();
+
+        //Far away from teammate, get close to enemy like zoombie
         internal override List<ForcedPoint> GetRecentForced()
         {
             List<ForcedPoint> forces = new List<ForcedPoint>();
@@ -29,7 +35,7 @@ namespace MH_HiHuc.Strategies
             {
                 if (tank.Live == true && tank.Name != MyBot.Name)
                 {
-                    var tankForce = new ForcedPoint(tank.X, tank.Y, tank.IsTeamate ? 10000 : -10000); //Far away from teammate, stick to enemy like zoombie
+                    var tankForce = new ForcedPoint(tank.X, tank.Y, tank.IsTeamate ? 10000 : -10000); 
                     forces.Add(tankForce);
                 }
             }
@@ -67,35 +73,6 @@ namespace MH_HiHuc.Strategies
             #endregion
 
             return forces;
-        }
-
-        public override void OnHitRobot(HitRobotEvent e)
-        {
-            if (MyBot.IsTeammate(e.Name))
-            {
-                return;
-            }
-            MyBot.TurnRight(e.Bearing);
-            double absoluteBearing = MyBot.HeadingRadians + e.BearingRadians;
-            MyBot.TurnGunRightRadians(Utils.NormalRelativeAngle(absoluteBearing - MyBot.GunHeadingRadians));
-
-            MyBot.Ahead(100);
-            MyBot.Fire(3);
-        }
-
-        public override void OnHitByBullet(HitByBulletEvent e)
-        {
-            base.OnHitByBullet(e);
-            if (MyBot.IsTeammate(e.Name))
-            {
-                return;
-            }
-            MyBot.TurnRight(e.Bearing);
-            double absoluteBearing = MyBot.HeadingRadians + e.BearingRadians;
-            MyBot.TurnGunRightRadians(Utils.NormalRelativeAngle(absoluteBearing - MyBot.GunHeadingRadians));
-
-            MyBot.Ahead(100);
-            MyBot.Fire(3);
         }
     }
 }

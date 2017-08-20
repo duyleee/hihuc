@@ -6,16 +6,14 @@ using Robocode.Util;
 
 namespace MH_HiHuc.Strategies
 {
-    internal class Solo : IStrategy
+    internal class Solo : StrategyBase, IStrategy
     {
-        public HiHucCore MyBot { get; set; }
-
         public Solo(HiHucCore bot)
         {
             MyBot = bot;
         }
 
-        public void Init()
+        public override void Init()
         {
             MyBot.SetColors(Utilities.GetTeamColor(), Color.Yellow, Color.DarkCyan);
 
@@ -23,7 +21,7 @@ namespace MH_HiHuc.Strategies
         }
 
         private string currentTarget = string.Empty;
-        public void OnScannedRobot(ScannedRobotEvent e)
+        public override void OnScannedRobot(ScannedRobotEvent e)
         {
             if (MyBot.IsTeammate(e.Name))
             {
@@ -55,7 +53,7 @@ namespace MH_HiHuc.Strategies
             MyBot.SetTurnRightRadians(turnAngle - randomClosingInAngle * moveDirection);
         }
 
-        public void OnHitByBullet(HitByBulletEvent e)
+        public override void OnHitByBullet(HitByBulletEvent e)
         {
             randomDistance += new Random().NextDouble() * 50.0 * turnDirection;
             if (randomDistance <= 100.0)
@@ -67,7 +65,7 @@ namespace MH_HiHuc.Strategies
                 randomDistance = 400.0;
             }
         }
-        public void OnHitRobot(HitRobotEvent evnt)
+        public override void OnHitRobot(HitRobotEvent evnt)
         {
             randomDistance += new Random().NextDouble() * 50.0 * turnDirection;
             if (randomDistance <= 100.0)
@@ -100,21 +98,12 @@ namespace MH_HiHuc.Strategies
             MyBot.SetFire(bullerPower);
         }
 
-        public void Run()
+        public override void Run()
         {
             MyBot.TurnRadarRight(360);
         }
 
-        public void OnEnemyMessage(Enemy e)
-        {
-        }
-
-        public void OnDroidMessage(string enemyName)
-        {
-
-        }
-
-        public void OnPaint(IGraphics graphics)
+        public override void OnPaint(IGraphics graphics)
         {
             if (!string.IsNullOrEmpty(currentTarget) && MyBot.Targets.ContainsKey(currentTarget))
             {
@@ -136,10 +125,10 @@ namespace MH_HiHuc.Strategies
 
                 //90o line with enemy line
                 var distance = enemy.Position.Distance(MyBot.Position) + 50;
-                var angLeft = Utilities.NormaliseBearing(MyBot.Position.GetBearing(enemy.Position) + Math.PI/2);
-                var angRight = Utilities.NormaliseBearing(MyBot.Position.GetBearing(enemy.Position) - Math.PI/2);
+                var angLeft = Utilities.NormaliseBearing(MyBot.Position.GetBearing(enemy.Position) + Math.PI / 2);
+                var angRight = Utilities.NormaliseBearing(MyBot.Position.GetBearing(enemy.Position) - Math.PI / 2);
                 var pointSize = 10;
-                
+
                 var startX = myBotX + Math.Sin(angLeft) * distance;
                 var startY = myBotY + Math.Cos(angLeft) * distance;
                 var endX = myBotX + Math.Sin(angRight) * distance;
