@@ -40,13 +40,14 @@ namespace MH_HiHuc.Base
             Targets[e.Name].Y = this.Y + Math.Cos(absbearing_rad) * e.Distance;
             Targets[e.Name].Live = true;
             Targets[e.Name].Energy = e.Energy;
+            Targets[e.Name].Velocity = e.Velocity;
+            Targets[e.Name].HeadingRadians = e.HeadingRadians;
             Targets[e.Name].IsTeamate = IsTeammate(e.Name);
 
             // Update enemy location to teamate
-            if (!Targets[e.Name].IsTeamate)
-            {
+            
                 BroadcastMessage(Targets[e.Name]);
-            }
+            
         }
 
         public override void OnMessageReceived(MessageEvent evnt)
@@ -54,8 +55,11 @@ namespace MH_HiHuc.Base
             if (evnt.Message is Enemy)
             {
                 var enemy = (Enemy)evnt.Message;
-                Targets[enemy.Name] = enemy;
-                Stragegy.OnEnemyMessage(enemy);
+                if (enemy.Name != Name)
+                {
+                    Targets[enemy.Name] = enemy;
+                    Stragegy.OnEnemyMessage(enemy);
+                }
             }
         }
 

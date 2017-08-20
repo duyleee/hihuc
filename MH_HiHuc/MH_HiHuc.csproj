@@ -55,6 +55,7 @@
     <Compile Include="Base\IStrategy.cs" />
     <Compile Include="Base\PointD.cs" />
     <Compile Include="Base\Utilities.cs" />
+    <Compile Include="Strategies\MeeleDroid.cs" />
     <Compile Include="Strategies\Meele.cs" />
     <Compile Include="Strategies\Solo.cs" />
     <Compile Include="HiHuc_TL.cs" />

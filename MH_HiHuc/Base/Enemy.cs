@@ -10,6 +10,8 @@ namespace MH_HiHuc.Base
         public double Y { get; set; }
         public bool IsTeamate { get; set; }
         public double Energy { get; set; }
+        public double Velocity { get; set; }
+        public double HeadingRadians { get; set; }
         public PointD Position
         {
             get

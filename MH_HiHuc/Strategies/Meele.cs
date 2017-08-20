@@ -11,7 +11,7 @@ namespace MH_HiHuc.Strategies
     public class Meele : IStrategy
     {
         public HiHucCore MyBot { get; set; }
-        List<ForcedPoint> BulletForces = new List<ForcedPoint>();
+        public List<ForcedPoint> BulletForces = new List<ForcedPoint>();
         public Meele(HiHucCore robot)
         {
             MyBot = robot;
@@ -31,7 +31,7 @@ namespace MH_HiHuc.Strategies
             MyBot.SetTurnRadarLeftRadians(2 * Math.PI);
             MyBot.Execute();
         }
-        
+
         public void OnHitByBullet(HitByBulletEvent e)
         {
             BulletForces.Add(new ForcedPoint(this.MyBot.Position.X, this.MyBot.Position.Y, 5000)
@@ -58,7 +58,7 @@ namespace MH_HiHuc.Strategies
             }
         }
 
-        public void OnHitRobot(HitRobotEvent evnt)
+        public virtual void OnHitRobot(HitRobotEvent evnt)
         {
 
         }
@@ -67,21 +67,18 @@ namespace MH_HiHuc.Strategies
         double midpointstrength = 0;
         int midpointcount = 0;
         Random randomizer = new Random();
-        private void ForceMoving()
+        internal virtual List<ForcedPoint> GetRecentForced()
         {
-            recentForces.Clear();
-            PointD nextPosition = MyBot.Position;
+            List<ForcedPoint> forces = new List<ForcedPoint>();
+            #region Tank Forced
             Enemy[] enemies = new Enemy[MyBot.Targets.Values.Count];
             MyBot.Targets.Values.CopyTo(enemies, 0);
-
-            #region Tanks forced
             foreach (var tank in enemies)
             {
-                if (tank.Live == true)
+                if (tank.Live == true && tank.Name != MyBot.Name) // prevent my name because location send through message from other droid
                 {
                     var tankForce = new ForcedPoint(tank.X, tank.Y, tank.IsTeamate ? 3000 : 5000);
-                    recentForces.Add(tankForce);
-                    nextPosition = tankForce.Force(nextPosition);
+                    forces.Add(tankForce);
                 }
             }
             #endregion
@@ -94,8 +91,7 @@ namespace MH_HiHuc.Strategies
                 midpointstrength = (randomizer.NextDouble() * 5000);
             }
             var middleFieldForce = new ForcedPoint(MyBot.BattleFieldWidth / 2, MyBot.BattleFieldHeight / 2, midpointstrength);
-            recentForces.Add(middleFieldForce);
-            nextPosition = middleFieldForce.Force(nextPosition);
+            forces.Add(middleFieldForce);
             #endregion
 
             #region Bullets forced
@@ -103,8 +99,7 @@ namespace MH_HiHuc.Strategies
             {
                 foreach (var bulletForce in BulletForces)
                 {
-                    recentForces.Add(bulletForce);
-                    nextPosition = bulletForce.Force(nextPosition);
+                    forces.Add(bulletForce);
                     bulletForce.AffectTurn--;
                 }
                 BulletForces = BulletForces.FindAll(bf => bf.AffectTurn > 0);
@@ -113,15 +108,45 @@ namespace MH_HiHuc.Strategies
 
             #region Wall forced
             var wallForcePower = 4500;
-            var rightWallForce = (new ForcedPoint(MyBot.BattleFieldWidth, MyBot.Y, wallForcePower)); recentForces.Add(rightWallForce);
-            var leftWallForce = (new ForcedPoint(0, MyBot.Y, wallForcePower)); recentForces.Add(leftWallForce);
-            var topWallForce = (new ForcedPoint(MyBot.X, MyBot.BattleFieldHeight, wallForcePower)); recentForces.Add(topWallForce);
-            var bottomWallForce = (new ForcedPoint(MyBot.X, 0, wallForcePower)); recentForces.Add(bottomWallForce);
-            nextPosition = rightWallForce.Force(nextPosition);
-            nextPosition = leftWallForce.Force(nextPosition);
-            nextPosition = topWallForce.Force(nextPosition);
-            nextPosition = bottomWallForce.Force(nextPosition);
+            var rightWallForce = (new ForcedPoint(MyBot.BattleFieldWidth, MyBot.Y, wallForcePower)); forces.Add(rightWallForce);
+            var leftWallForce = (new ForcedPoint(0, MyBot.Y, wallForcePower)); forces.Add(leftWallForce);
+            var topWallForce = (new ForcedPoint(MyBot.X, MyBot.BattleFieldHeight, wallForcePower)); forces.Add(topWallForce);
+            var bottomWallForce = (new ForcedPoint(MyBot.X, 0, wallForcePower)); forces.Add(bottomWallForce);
             #endregion
+
+            return forces;
+        }
+
+        private void ForceMoving()
+        {
+            PointD nextPosition = MyBot.Position;
+
+            recentForces.Clear();
+            recentForces = GetRecentForced();
+
+            // Adjust position by forces
+            for (int i = 0; i < recentForces.Count; i++)
+            {
+                nextPosition = recentForces[i].Force(nextPosition);
+            }
+
+            //Prevent wall
+            if (nextPosition.X <= 20)
+            {
+                nextPosition.X = 20;
+            }
+            if (nextPosition.X >= 1000 - 20)
+            {
+                nextPosition.X = 1000 - 20;
+            }
+            if (nextPosition.Y <= 20)
+            {
+                nextPosition.Y = 20;
+            }
+            if (nextPosition.Y >= 1000 - 20)
+            {
+                nextPosition.Y = 1000 - 20;
+            }
 
             //Move in the direction of our resolved force.
             MyBot.GotoPoint(nextPosition);
@@ -137,6 +162,7 @@ namespace MH_HiHuc.Strategies
             foreach (var item in currentForces)
             {
                 var pen = new Pen(item.Color);
+                var teamMatePen = new Pen(Color.Orange);
                 var brush = new SolidBrush(item.Color);
                 var size = (float)item.Power / 50;
                 var drawPoint = new RectangleF
@@ -146,7 +172,7 @@ namespace MH_HiHuc.Strategies
                     Height = size,
                     Width = size
                 };
-                graphics.DrawEllipse(pen, drawPoint);
+                graphics.DrawEllipse(item.Power == 3000 ? teamMatePen : pen, drawPoint);
 
                 graphics.DrawString(item.Power.ToString(), new Font(FontFamily.GenericSerif, 150, FontStyle.Bold, GraphicsUnit.Millimeter), Brushes.White, new PointF
                 {
@@ -157,7 +183,7 @@ namespace MH_HiHuc.Strategies
             }
 
             var botsize = 100;
-            graphics.DrawEllipse(Pens.RoyalBlue, new RectangleF
+            graphics.DrawEllipse(Pens.DarkCyan, new RectangleF
             {
                 X = (float)MyBot.X - botsize / 2,
                 Y = (float)MyBot.Y - botsize / 2,
@@ -166,5 +192,9 @@ namespace MH_HiHuc.Strategies
             });
         }
         #endregion
+
+        public virtual void OnEnemyMessage(Enemy e)
+        {
+        }
     }
 }
