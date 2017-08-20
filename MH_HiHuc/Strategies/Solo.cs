@@ -37,25 +37,23 @@ namespace MH_HiHuc.Strategies
 
         private int turnDirection = 1;
         private int moveDirection = 1;
-        private int randomTurnFactor = 5;
         private double randomDistance = 200.0;
+        private int closeInMargin = 100;
+        private Random randomizer = new Random();
         private void Move(ScannedRobotEvent e)
         {
+            //http://mark.random-article.com/weber/java/robocode/lesson5.html - closing in movement
             if (MyBot.DistanceRemaining == 0.0)
             {
-                moveDirection *= -1; //moving backward
-                turnDirection *= -1; //moving in opposite direction
+                moveDirection *= -1; //revert body direction
+                turnDirection *= -1; //revert turn direction
                 MyBot.SetAhead(randomDistance * moveDirection);
             }
 
-            int distantCoefficient = (e.Distance > 70) ? 1 : -1;
-            double coefficientAngel = Math.PI / randomTurnFactor;
-            randomTurnFactor++;
-            if (randomTurnFactor >= 7)
-            {
-                randomTurnFactor = 5;
-            }
-            MyBot.SetTurnRightRadians(e.BearingRadians + Math.PI / 2 - coefficientAngel * moveDirection * distantCoefficient);
+            double randomClosingInAngle = Math.PI / randomizer.Next(5, 7);
+            var turnAngle = e.BearingRadians + Math.PI / 2;// 90o heading with enemy
+
+            MyBot.SetTurnRightRadians(turnAngle - randomClosingInAngle * moveDirection);
         }
 
         public void OnHitByBullet(HitByBulletEvent e)

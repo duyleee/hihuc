@@ -32,7 +32,7 @@ namespace MH_HiHuc.Strategies
             MyBot.Execute();
         }
 
-        public void OnHitByBullet(HitByBulletEvent e)
+        public virtual void OnHitByBullet(HitByBulletEvent e)
         {
             BulletForces.Add(new ForcedPoint(this.MyBot.Position.X, this.MyBot.Position.Y, 5000)
             {
@@ -131,21 +131,22 @@ namespace MH_HiHuc.Strategies
             }
 
             //Prevent wall
-            if (nextPosition.X <= 20)
+            var wallMargin = 36 / 2 + 1;
+            if (nextPosition.X <= wallMargin)
             {
-                nextPosition.X = 20;
+                nextPosition.X = wallMargin;
             }
-            if (nextPosition.X >= 1000 - 20)
+            if (nextPosition.X >= 1000 - wallMargin)
             {
-                nextPosition.X = 1000 - 20;
+                nextPosition.X = 1000 - wallMargin;
             }
-            if (nextPosition.Y <= 20)
+            if (nextPosition.Y <= wallMargin)
             {
-                nextPosition.Y = 20;
+                nextPosition.Y = wallMargin;
             }
-            if (nextPosition.Y >= 1000 - 20)
+            if (nextPosition.Y >= 1000 - wallMargin)
             {
-                nextPosition.Y = 1000 - 20;
+                nextPosition.Y = 1000 - wallMargin;
             }
 
             //Move in the direction of our resolved force.
