@@ -37,8 +37,7 @@ namespace MH_HiHuc.Strategies
 
         private int turnDirection = 1;
         private int moveDirection = 1;
-        private double randomDistance = 200.0;
-        private int closeInMargin = 100;
+        private double randomDistance = 200;
         private Random randomizer = new Random();
         private void Move(ScannedRobotEvent e)
         {
