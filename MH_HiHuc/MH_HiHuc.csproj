@@ -55,12 +55,11 @@
     <Compile Include="Base\IStrategy.cs" />
     <Compile Include="Base\PointD.cs" />
     <Compile Include="Base\Utilities.cs" />
-    <Compile Include="Strategies\MeeleDroid.cs" />
+    <Compile Include="Strategies\Zoombie.cs" />
     <Compile Include="Strategies\Meele.cs" />
     <Compile Include="Strategies\Solo.cs" />
     <Compile Include="HiHuc_TL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Strategies\Zoombie.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

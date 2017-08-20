@@ -9,7 +9,7 @@ namespace MH_HiHuc
     {
         public override void Run()
         {
-            Stragegy = new MeeleDroid(this);
+            Stragegy = new Zoombie(this);
             Stragegy.Init();
             while (true)
             {
