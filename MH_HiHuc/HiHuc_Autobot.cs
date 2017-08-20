@@ -21,7 +21,7 @@ namespace MH_HiHuc
         public override void OnHitRobot(HitRobotEvent e)
         {
             base.OnHitRobot(e);
-            if (!IsTeammate(e.Name))
+            if (!IsTeammate(e.Name) && !(Stragegy is RamBot))
             {
                 Stragegy = new RamBot(this);
                 Stragegy.Init();

@@ -15,17 +15,14 @@ namespace MH_HiHuc.Strategies
 
         public override void Run()
         {
-            if (string.IsNullOrEmpty(currentTarget) || (MyBot.Targets[currentTarget].Live == false && MyBot.Targets.ContainsKey(currentTarget)))
-            {
-                MyBot.SetTurnRadarLeft(2 * Math.PI);
-            }
+            MyBot.SetTurnRadarRightRadians(2 * Math.PI);
+
         }
 
         public override void Init()
         {
             MyBot.IsAdjustGunForRobotTurn = true;
             MyBot.IsAdjustRadarForGunTurn = true;
-            MyBot.SetTurnRadarRightRadians(2 * Math.PI);
             MyBot.SetColors(Utilities.GetTeamColor(), Color.OrangeRed, Color.OrangeRed);
         }
 
@@ -39,10 +36,8 @@ namespace MH_HiHuc.Strategies
                 currentTarget = e.Name;
                 var myBotPosition = MyBot.Position;
                 double absBearing = e.BearingRadians + MyBot.HeadingRadians;
-
                 Move(e, absBearing);
                 Fire(e, absBearing);
-                MyBot.SetTurnRadarRightRadians(Utils.NormalRelativeAngle(absBearing - MyBot.RadarHeadingRadians) * 2);
             }
         }
 
