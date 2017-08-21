@@ -8,13 +8,13 @@ namespace MH_HiHuc.Strategies
 {
     internal class RamBot : StrategyBase, IStrategy
     {
-        private static double BULLET_POWER = 3; //Our bulletpower.
-        private static double BULLET_DAMAGE = BULLET_POWER * 4; //Formula for bullet damage.
-        private static double BULLET_SPEED = 20 - 3 * BULLET_POWER; //Formula for bullet speed.
+        private static double _bulletPower = 3; //Our bulletpower.
+        private static double _bulletDamage = _bulletPower * 4; //Formula for bullet damage.
+        private static double _bulletSpeed = 20 - 3 * _bulletPower; //Formula for bullet speed.
         
-        private double dir = 1;
-        private double oldEnemyHeading;
-        private double enemyEnergy;
+        private double _dir = 1;
+        private double _oldEnemyHeading;
+        private double _enemyEnergy;
 
         public RamBot(HiHucCore bot)
         {
@@ -51,12 +51,12 @@ namespace MH_HiHuc.Strategies
 
         public override void OnHitWall(HitWallEvent e)
         {
-            dir = -dir;
+            _dir = -_dir;
         }
 
         public override void OnBulletHit(BulletHitEvent e)
         {
-            enemyEnergy -= BULLET_DAMAGE;
+            _enemyEnergy -= _bulletDamage;
         }
 
         private void Move(ScannedRobotEvent e, double absoluteBearing)
@@ -66,22 +66,22 @@ namespace MH_HiHuc.Strategies
 
             //This formula is used because the 1/e.Distance means that as we get closer to the enemy, we will turn to them more sharply. 
             //We want to do this because it reduces our chances of being defeated before we reach the enemy robot.
-            turn -= Math.Max(0.5, (1 / e.Distance) * 100) * dir;
+            turn -= Math.Max(0.5, (1 / e.Distance) * 100) * _dir;
 
             MyBot.SetTurnRightRadians(Utils.NormalRelativeAngle(turn - MyBot.HeadingRadians));
 
             //This line makes us slow down when we need to turn sharply.
             MyBot.MaxVelocity = (400 / MyBot.TurnRemaining);
           
-            MyBot.SetAhead(100 * dir);
+            MyBot.SetAhead(100 * _dir);
         }
 
         private void Fire(ScannedRobotEvent e, double absoluteBearing)
         {
             //Finding the heading and heading change.
             double enemyHeading = e.HeadingRadians;
-            double enemyHeadingChange = enemyHeading - oldEnemyHeading;
-            oldEnemyHeading = enemyHeading;
+            double enemyHeadingChange = enemyHeading - _oldEnemyHeading;
+            _oldEnemyHeading = enemyHeading;
 
             // Circular Targeting http://robowiki.net/wiki/Circular_Targeting
             /*This method of targeting is know as circular targeting; you assume your enemy will
@@ -92,7 +92,7 @@ namespace MH_HiHuc.Strategies
             double predictedX = MyBot.X + e.Distance * Math.Sin(absoluteBearing);
             double predictedY = MyBot.Y + e.Distance * Math.Cos(absoluteBearing);
             PointD point = new PointD(MyBot.X, MyBot.Y);
-            while ((++deltaTime) * BULLET_SPEED < point.Distance(predictedX, predictedY))
+            while ((++deltaTime) * _bulletSpeed < point.Distance(predictedX, predictedY))
             {
 
                 //Add the movement we think our enemy will make to our enemy's current X and Y

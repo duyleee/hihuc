@@ -20,61 +20,61 @@ namespace MH_HiHuc.Strategies
             MyBot.IsAdjustGunForRobotTurn = true;
         }
 
-        private string currentTarget = string.Empty;
+        private string _currentTarget = string.Empty;
         public override void OnScannedRobot(ScannedRobotEvent e)
         {
             if (MyBot.IsTeammate(e.Name))
             {
                 return;
             }
-            currentTarget = e.Name;
+            _currentTarget = e.Name;
             Move(e);
             RadarAdjust(e);
             Fire(e);
         }
 
-        private int turnDirection = 1;
-        private int moveDirection = 1;
-        private double randomDistance = 200;
-        private Random randomizer = new Random();
+        private int _turnDirection = 1;
+        private int _moveDirection = 1;
+        private double _randomDistance = 200;
+        private Random _randomizer = new Random();
         private void Move(ScannedRobotEvent e)
         {
             //http://mark.random-article.com/weber/java/robocode/lesson5.html - closing in movement
             if (MyBot.DistanceRemaining == 0.0)
             {
-                moveDirection *= -1; //revert body direction
-                turnDirection *= -1; //revert turn direction
-                MyBot.SetAhead(randomDistance * moveDirection);
+                _moveDirection *= -1; //revert body direction
+                _turnDirection *= -1; //revert turn direction
+                MyBot.SetAhead(_randomDistance * _moveDirection);
             }
 
-            double randomClosingInAngle = Math.PI / (5 + randomizer.NextDouble()*2);
+            double randomClosingInAngle = Math.PI / (5 + _randomizer.NextDouble()*2);
             var turnAngle = e.BearingRadians + Math.PI / 2;// 90o heading with enemy
 
-            MyBot.SetTurnRightRadians(turnAngle - randomClosingInAngle * moveDirection);
+            MyBot.SetTurnRightRadians(turnAngle - randomClosingInAngle * _moveDirection);
         }
 
         public override void OnHitByBullet(HitByBulletEvent e)
         {
-            randomDistance += new Random().NextDouble() * 50.0 * turnDirection;
-            if (randomDistance <= 100.0)
+            _randomDistance += new Random().NextDouble() * 50.0 * _turnDirection;
+            if (_randomDistance <= 100.0)
             {
-                randomDistance = 100.0;
+                _randomDistance = 100.0;
             }
-            if (randomDistance >= 400.0)
+            if (_randomDistance >= 400.0)
             {
-                randomDistance = 400.0;
+                _randomDistance = 400.0;
             }
         }
         public override void OnHitRobot(HitRobotEvent evnt)
         {
-            randomDistance += new Random().NextDouble() * 50.0 * turnDirection;
-            if (randomDistance <= 100.0)
+            _randomDistance += new Random().NextDouble() * 50.0 * _turnDirection;
+            if (_randomDistance <= 100.0)
             {
-                randomDistance = 100.0;
+                _randomDistance = 100.0;
             }
-            if (randomDistance >= 400.0)
+            if (_randomDistance >= 400.0)
             {
-                randomDistance = 400.0;
+                _randomDistance = 400.0;
             }
         }
 
@@ -105,9 +105,9 @@ namespace MH_HiHuc.Strategies
 
         public override void OnPaint(IGraphics graphics)
         {
-            if (!string.IsNullOrEmpty(currentTarget) && MyBot.Targets.ContainsKey(currentTarget))
+            if (!string.IsNullOrEmpty(_currentTarget) && MyBot.Targets.ContainsKey(_currentTarget))
             {
-                var enemy = MyBot.Targets[currentTarget];
+                var enemy = MyBot.Targets[_currentTarget];
                 var myBotX = MyBot.Position.X;
                 var myBotY = MyBot.Position.Y;
 
