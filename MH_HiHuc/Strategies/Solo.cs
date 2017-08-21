@@ -47,7 +47,7 @@ namespace MH_HiHuc.Strategies
                 MyBot.SetAhead(randomDistance * moveDirection);
             }
 
-            double randomClosingInAngle = Math.PI / randomizer.Next(5, 7);
+            double randomClosingInAngle = Math.PI / (5 + randomizer.NextDouble()*2);
             var turnAngle = e.BearingRadians + Math.PI / 2;// 90o heading with enemy
 
             MyBot.SetTurnRightRadians(turnAngle - randomClosingInAngle * moveDirection);
