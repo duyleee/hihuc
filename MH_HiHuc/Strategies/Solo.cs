@@ -47,34 +47,37 @@ namespace MH_HiHuc.Strategies
                 MyBot.SetAhead(randomDistance * moveDirection);
             }
 
+            var turnAngle = e.BearingRadians + Math.PI / 2;// 90o to enemy
             double randomClosingInAngle = Math.PI / randomizer.Next(5, 7);
-            var turnAngle = e.BearingRadians + Math.PI / 2;// 90o heading with enemy
+            randomClosingInAngle = randomClosingInAngle * moveDirection; // turn close to enemy
+            randomClosingInAngle = randomClosingInAngle * (e.Distance > 50 ? 1 : -1); // move out when too close
 
-            MyBot.SetTurnRightRadians(turnAngle - randomClosingInAngle * moveDirection);
+            MyBot.SetTurnRightRadians(turnAngle - randomClosingInAngle);
         }
 
         public override void OnHitByBullet(HitByBulletEvent e)
         {
-            randomDistance += new Random().NextDouble() * 50.0 * turnDirection;
-            if (randomDistance <= 100.0)
-            {
-                randomDistance = 100.0;
-            }
-            if (randomDistance >= 400.0)
-            {
-                randomDistance = 400.0;
-            }
+            UpdateMoveFactor();
         }
+
         public override void OnHitRobot(HitRobotEvent evnt)
         {
-            randomDistance += new Random().NextDouble() * 50.0 * turnDirection;
-            if (randomDistance <= 100.0)
+            MyBot.Fire(3); // fire enemy when hit him
+            UpdateMoveFactor();
+        }
+
+        private void UpdateMoveFactor()
+        {
+            randomDistance += new Random().NextDouble() * 10 * turnDirection;
+
+            if (randomDistance <= 50)
             {
-                randomDistance = 100.0;
+                randomDistance = 50;
             }
-            if (randomDistance >= 400.0)
+
+            if (randomDistance >= 400)
             {
-                randomDistance = 400.0;
+                randomDistance = 400;
             }
         }
 
@@ -87,7 +90,7 @@ namespace MH_HiHuc.Strategies
 
         private void Fire(ScannedRobotEvent e)
         {
-            var bullerPower = 400 / e.Distance;
+            var bullerPower = 500 / e.Distance;
 
             //simplest linear targeting algorithm - http://robowiki.net/wiki/Linear_Targeting
             double absoluteBearing = MyBot.HeadingRadians + e.BearingRadians;
