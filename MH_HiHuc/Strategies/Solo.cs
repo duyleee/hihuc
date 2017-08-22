@@ -35,6 +35,7 @@ namespace MH_HiHuc.Strategies
 
         private int turnDirection = 1;
         private int moveDirection = 1;
+        private int turnFactor = 5;
         private double randomDistance = 200;
         private Random randomizer = new Random();
         private void Move(ScannedRobotEvent e)
@@ -48,7 +49,12 @@ namespace MH_HiHuc.Strategies
             }
 
             var turnAngle = e.BearingRadians + Math.PI / 2;// 90o to enemy
-            double randomClosingInAngle = Math.PI / randomizer.Next(5, 7);
+            double randomClosingInAngle = Math.PI / turnFactor;
+            turnFactor++;
+            if (turnFactor >= 7)
+            {
+                turnFactor = 5;
+            }
             randomClosingInAngle = randomClosingInAngle * moveDirection; // turn close to enemy
             randomClosingInAngle = randomClosingInAngle * (e.Distance > 50 ? 1 : -1); // move out when too close
 
@@ -83,16 +89,16 @@ namespace MH_HiHuc.Strategies
 
         private void RadarAdjust(ScannedRobotEvent e)
         {
-            //radar scan 1 vs 1 algorithm - perfect radar lock - http://robowiki.net/wiki/One_on_One_Radar
+            //http://robowiki.net/wiki/One_on_One_Radar
             double radarAngleToTurn = MyBot.HeadingRadians - MyBot.RadarHeadingRadians + e.BearingRadians;
             MyBot.SetTurnRadarRightRadians(Utils.NormalRelativeAngle(radarAngleToTurn));
         }
 
         private void Fire(ScannedRobotEvent e)
         {
-            var bullerPower = 500 / e.Distance;
+            var bullerPower = 400 / e.Distance;
 
-            //simplest linear targeting algorithm - http://robowiki.net/wiki/Linear_Targeting
+            //http://robowiki.net/wiki/Linear_Targeting
             double absoluteBearing = MyBot.HeadingRadians + e.BearingRadians;
             MyBot.SetTurnGunRightRadians(Utils.NormalRelativeAngle(absoluteBearing -
                            MyBot.GunHeadingRadians + (e.Velocity * Math.Sin(e.HeadingRadians -
@@ -103,7 +109,7 @@ namespace MH_HiHuc.Strategies
 
         public override void Run()
         {
-            MyBot.TurnRadarRight(360);
+            MyBot.TurnRadarRightRadians(2 * Math.PI);
         }
 
         public override void OnPaint(IGraphics graphics)
