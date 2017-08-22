@@ -30,7 +30,7 @@ namespace MH_HiHuc.Strategies
             currentTarget = e.Name;
             Move(e);
             RadarAdjust(e);
-            Fire(e);
+            Fire(e, 0);
         }
 
         private int turnDirection = 1;
@@ -66,10 +66,13 @@ namespace MH_HiHuc.Strategies
             UpdateMoveFactor();
         }
 
-        public override void OnHitRobot(HitRobotEvent evnt)
+        public override void OnHitRobot(HitRobotEvent e)
         {
-            MyBot.Fire(3); // fire enemy when hit him
             UpdateMoveFactor();
+            double absoluteBearing = MyBot.HeadingRadians + e.BearingRadians;
+            MyBot.TurnGunRightRadians(Utils.NormalRelativeAngle(absoluteBearing -
+                           MyBot.GunHeadingRadians));
+            MyBot.Fire(3); // fire enemy when hit him
         }
 
         private void UpdateMoveFactor()
@@ -105,6 +108,61 @@ namespace MH_HiHuc.Strategies
                            absoluteBearing) / Rules.GetBulletSpeed(bullerPower))));
 
             MyBot.SetFire(bullerPower);
+        }
+
+        private static double _bulletPower = 3; //Our bulletpower.
+        private static double _bulletDamage = _bulletPower * 4; //Formula for bullet damage.
+        private static double _bulletSpeed = 20 - 3 * _bulletPower; //Formula for bullet speed.
+
+        private double _dir = 1;
+        private double _oldEnemyHeading;
+        private double _enemyEnergy;
+        private void Fire(ScannedRobotEvent e, double absoluteBearing)
+        {
+            absoluteBearing = MyBot.HeadingRadians + e.BearingRadians;
+            //Finding the heading and heading change.
+            double enemyHeading = e.HeadingRadians;
+            double enemyHeadingChange = enemyHeading - _oldEnemyHeading;
+            _oldEnemyHeading = enemyHeading;
+
+            // Circular Targeting http://robowiki.net/wiki/Circular_Targeting
+            /*This method of targeting is know as circular targeting; you assume your enemy will
+             *keep moving with the same speed and turn rate that he is using at fire time.The 
+             *base code comes from the wiki.
+            */
+            double deltaTime = 0;
+            double predictedX = MyBot.X + e.Distance * Math.Sin(absoluteBearing);
+            double predictedY = MyBot.Y + e.Distance * Math.Cos(absoluteBearing);
+            PointD point = new PointD(MyBot.X, MyBot.Y);
+            while ((++deltaTime) * _bulletSpeed < point.Distance(predictedX, predictedY))
+            {
+
+                //Add the movement we think our enemy will make to our enemy's current X and Y
+                predictedX += Math.Sin(enemyHeading) * e.Velocity;
+                predictedY += Math.Cos(enemyHeading) * e.Velocity;
+
+
+                //Find our enemy's heading changes.
+                enemyHeading += enemyHeadingChange;
+
+                //If our predicted coordinates are outside the walls, put them 18 distance units away from the walls as we know 
+                //that that is the closest they can get to the wall (Bots are non-rotating 36*36 squares).
+                predictedX = Math.Max(Math.Min(predictedX, MyBot.BattleFieldWidth - 18), 18);
+                predictedY = Math.Max(Math.Min(predictedY, MyBot.BattleFieldHeight - 18), 18);
+
+            }
+
+            //Find the bearing of our predicted coordinates from us.
+            double aim = Utils.NormalAbsoluteAngle(Math.Atan2(predictedX - MyBot.X, predictedY - MyBot.Y));
+
+            var bullerPower = 400 / e.Distance;
+
+            //Aim and fire.
+            MyBot.SetTurnGunRightRadians(Utils.NormalRelativeAngle(aim - MyBot.GunHeadingRadians));
+
+            MyBot.SetFire(bullerPower);
+
+            MyBot.SetTurnRadarRightRadians(Utils.NormalRelativeAngle(absoluteBearing - MyBot.RadarHeadingRadians) * 2);
         }
 
         public override void Run()
