@@ -20,9 +20,9 @@ namespace MH_HiHuc.Strategies
         }
 
 
-        double midpointstrength = 0;
-        int midpointcount = 0;
-        Random randomizer = new Random();
+        double _midpointstrength = 0;
+        int _midpointcount = 0;
+        Random _randomizer = new Random();
 
         //Far away from teammate, get close to enemy like zoombie
         internal override List<ForcedPoint> GetRecentForced()
@@ -42,13 +42,13 @@ namespace MH_HiHuc.Strategies
             #endregion
 
             #region Middle-Field Forced
-            midpointcount++;
-            if (midpointcount > 5)
+            _midpointcount++;
+            if (_midpointcount > 5)
             {
-                midpointcount = 0;
-                midpointstrength = (randomizer.NextDouble() * 5000);
+                _midpointcount = 0;
+                _midpointstrength = (_randomizer.NextDouble() * 5000);
             }
-            var middleFieldForce = new ForcedPoint(MyBot.BattleFieldWidth / 2, MyBot.BattleFieldHeight / 2, midpointstrength);
+            var middleFieldForce = new ForcedPoint(MyBot.BattleFieldWidth / 2, MyBot.BattleFieldHeight / 2, _midpointstrength);
             forces.Add(middleFieldForce);
             #endregion
 

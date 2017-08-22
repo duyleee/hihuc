@@ -33,11 +33,11 @@ namespace MH_HiHuc.Base
                 Targets.Add(e.Name, enemy);
             }
             //the next line gets the absolute bearing to the point where the bot is
-            double absbearing_rad = (this.HeadingRadians + e.BearingRadians) % (2 * Math.PI);
+            double absbearingRad = (this.HeadingRadians + e.BearingRadians) % (2 * Math.PI);
             //this section sets all the information about our target
             Targets[e.Name].Name = e.Name;
-            Targets[e.Name].X = this.X + Math.Sin(absbearing_rad) * e.Distance;
-            Targets[e.Name].Y = this.Y + Math.Cos(absbearing_rad) * e.Distance;
+            Targets[e.Name].X = this.X + Math.Sin(absbearingRad) * e.Distance;
+            Targets[e.Name].Y = this.Y + Math.Cos(absbearingRad) * e.Distance;
             Targets[e.Name].Live = true;
             Targets[e.Name].Energy = e.Energy;
             Targets[e.Name].Velocity = e.Velocity;
@@ -143,18 +143,18 @@ namespace MH_HiHuc.Base
 
         internal Enemy GetClosestTarget()
         {
-            var _targets = new Enemy[Targets.Values.Count];
-            Targets.Values.CopyTo(_targets, 0);
-            var _livetargets = _targets.Where(c => c.Live && !c.IsTeamate).ToArray();
+            var targets = new Enemy[Targets.Values.Count];
+            Targets.Values.CopyTo(targets, 0);
+            var livetargets = targets.Where(c => c.Live && !c.IsTeamate).ToArray();
             double closestDistance = 1000;
             Enemy closestEnemy = null;
-            for (int i = 0; i < _livetargets.Length; i++)
+            for (int i = 0; i < livetargets.Length; i++)
             {
-                var distance = _livetargets[i].Position.Distance(this.Position);
+                var distance = livetargets[i].Position.Distance(this.Position);
                 if (distance < closestDistance)
                 {
                     closestDistance = distance;
-                    closestEnemy = _livetargets[i];
+                    closestEnemy = livetargets[i];
                 }
             }
             return closestEnemy;

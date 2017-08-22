@@ -44,15 +44,5 @@ namespace MH_HiHuc.Base
         {
             return GetBearing(point.X, point.Y);
         }
-
-        public PointD GetRelativePoint(double headingRadians, double bearingRadians, double distance)
-        {
-            double absbearing_rad = (headingRadians + bearingRadians) % (2 * Math.PI);
-            return new PointD
-            {
-                X = X + Math.Sin(absbearing_rad) * distance,
-                Y = Y + Math.Cos(absbearing_rad) * distance
-            };
-        }
     }
 }

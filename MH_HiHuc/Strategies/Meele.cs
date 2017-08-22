@@ -3,7 +3,6 @@ using Robocode;
 using MH_HiHuc.Base;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using Robocode.Util;
 
 namespace MH_HiHuc.Strategies
@@ -58,10 +57,10 @@ namespace MH_HiHuc.Strategies
         }
 
         #region Moving
-        private List<ForcedPoint> recentForces = new List<ForcedPoint>();
-        double midpointstrength = 0;
-        int midpointcount = 0;
-        Random randomizer = new Random();
+        private List<ForcedPoint> _recentForces = new List<ForcedPoint>();
+        double _midpointstrength = 0;
+        int _midpointcount = 0;
+        Random _randomizer = new Random();
         internal virtual List<ForcedPoint> GetRecentForced()
         {
             List<ForcedPoint> forces = new List<ForcedPoint>();
@@ -79,13 +78,13 @@ namespace MH_HiHuc.Strategies
             #endregion
 
             #region Middle-Field Forced
-            midpointcount++;
-            if (midpointcount > 5)
+            _midpointcount++;
+            if (_midpointcount > 5)
             {
-                midpointcount = 0;
-                midpointstrength = (randomizer.NextDouble() * 5000);
+                _midpointcount = 0;
+                _midpointstrength = (_randomizer.NextDouble() * 5000);
             }
-            var middleFieldForce = new ForcedPoint(MyBot.BattleFieldWidth / 2, MyBot.BattleFieldHeight / 2, midpointstrength);
+            var middleFieldForce = new ForcedPoint(MyBot.BattleFieldWidth / 2, MyBot.BattleFieldHeight / 2, _midpointstrength);
             forces.Add(middleFieldForce);
             #endregion
 
@@ -116,13 +115,13 @@ namespace MH_HiHuc.Strategies
         {
             PointD nextPosition = MyBot.Position;
 
-            recentForces.Clear();
-            recentForces = GetRecentForced();
+            _recentForces.Clear();
+            _recentForces = GetRecentForced();
 
             // Adjust position by forces
-            for (int i = 0; i < recentForces.Count; i++)
+            for (int i = 0; i < _recentForces.Count; i++)
             {
-                nextPosition = recentForces[i].Force(nextPosition);
+                nextPosition = _recentForces[i].Force(nextPosition);
             }
 
             //Prevent wall
@@ -152,8 +151,8 @@ namespace MH_HiHuc.Strategies
         #region Debugging
         public override void OnPaint(IGraphics graphics)
         {
-            var currentForces = new ForcedPoint[recentForces.Count];
-            recentForces.CopyTo(currentForces);
+            var currentForces = new ForcedPoint[_recentForces.Count];
+            _recentForces.CopyTo(currentForces);
 
             foreach (var item in currentForces)
             {

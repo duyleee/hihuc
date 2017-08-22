@@ -18,15 +18,7 @@ namespace MH_HiHuc.Base
                 ang += 2 * Math.PI;
             return ang;
         }
-        public static double NormaliseHeading(double ang)
-        {
-            if (ang > 2 * Math.PI)
-                ang -= 2 * Math.PI;
-            if (ang < 0)
-                ang += 2 * Math.PI;
-            return ang;
-        }
-
+       
         public static Color GetTeamColor()
         {
             return ColorTranslator.FromHtml("#816ea5");

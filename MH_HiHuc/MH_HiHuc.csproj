@@ -56,6 +56,7 @@
     <Compile Include="Base\IStrategy.cs" />
     <Compile Include="Base\PointD.cs" />
     <Compile Include="Base\Utilities.cs" />
+    <Compile Include="HiHuc_Warrior.cs" />
     <Compile Include="Strategies\RamBot.cs" />
     <Compile Include="Strategies\Zoombie.cs" />
     <Compile Include="Strategies\Meele.cs" />
