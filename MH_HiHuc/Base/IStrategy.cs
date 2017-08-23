@@ -7,6 +7,7 @@ namespace MH_HiHuc.Strategies
     {
         HiHucCore MyBot { get; set; }
         void Init();
+        void Clear();
         void Run();
         void OnScannedRobot(ScannedRobotEvent e);
         void OnEnemyMessage(Enemy e);

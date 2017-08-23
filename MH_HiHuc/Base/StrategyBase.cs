@@ -1,4 +1,5 @@
-﻿using MH_HiHuc.Strategies;
+﻿using System;
+using MH_HiHuc.Strategies;
 using Robocode;
 
 namespace MH_HiHuc.Base
@@ -6,6 +7,11 @@ namespace MH_HiHuc.Base
     public abstract class StrategyBase : IStrategy
     {
         public virtual HiHucCore MyBot { get; set; }
+
+        public void Clear()
+        {
+            MyBot.ClearAllEvents();
+        }
 
         public virtual void Init()
         {

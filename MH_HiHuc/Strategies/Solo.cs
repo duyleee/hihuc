@@ -69,10 +69,15 @@ namespace MH_HiHuc.Strategies
         public override void OnHitRobot(HitRobotEvent e)
         {
             UpdateMoveFactor();
-            double absoluteBearing = MyBot.HeadingRadians + e.BearingRadians;
-            MyBot.TurnGunRightRadians(Utils.NormalRelativeAngle(absoluteBearing -
-                           MyBot.GunHeadingRadians));
-            MyBot.Fire(3); // fire enemy when hit him
+
+            if (!MyBot.IsTeammate(e.Name))
+            {
+                double absoluteBearing = MyBot.HeadingRadians + e.BearingRadians;
+                MyBot.TurnGunRightRadians(Utils.NormalRelativeAngle(absoluteBearing -
+                               MyBot.GunHeadingRadians));
+                MyBot.Fire(3); // fire enemy when hit him
+            }
+            
         }
 
         private void UpdateMoveFactor()

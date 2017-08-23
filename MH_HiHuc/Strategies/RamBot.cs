@@ -49,6 +49,18 @@ namespace MH_HiHuc.Strategies
             }
         }
 
+        public override void OnHitRobot(HitRobotEvent e)
+        {
+            base.OnHitRobot(e);
+            if (!MyBot.IsTeammate(e.Name))
+            {
+                double absoluteBearing = MyBot.HeadingRadians + e.BearingRadians;
+                MyBot.TurnGunRightRadians(Utils.NormalRelativeAngle(absoluteBearing -
+                               MyBot.GunHeadingRadians));
+                MyBot.Fire(3); // fire enemy when hit him
+            }
+        }
+
         public override void OnHitWall(HitWallEvent e)
         {
             _dir = -_dir;
