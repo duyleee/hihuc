@@ -30,7 +30,7 @@ namespace MH_HiHuc.Strategies
             currentTarget = e.Name;
             Move(e);
             RadarAdjust(e);
-            Fire(e, 0);
+            Fire(e);
         }
 
         private int turnDirection = 1;
