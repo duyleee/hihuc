@@ -30,7 +30,10 @@ namespace MH_HiHuc
             base.OnRobotDeath(evnt);
 
             // TL go first
-            if (EnemyCount() <= 4 && !(Stragegy is Solo))
+            var _enemyCount = EnemyCount();
+            var _teamCount = TeamCount();
+            var _turn = 4;
+            if (((_enemyCount <= _turn && _teamCount <= _enemyCount) || (_teamCount <= _enemyCount && _teamCount <= _turn)) && !(Stragegy is Solo))
             {
                 Stragegy = new Solo(this);
                 Stragegy.Init();

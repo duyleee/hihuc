@@ -27,7 +27,10 @@ namespace MH_HiHuc
         public override void OnRobotDeath(RobotDeathEvent evnt)
         {
             base.OnRobotDeath(evnt);
-            if (EnemyCount() <= 3 && !(Stragegy is Solo))
+            var _enemyCount = EnemyCount();
+            var _teamCount = TeamCount();
+            var _turn = 3;
+            if (((_enemyCount <= _turn && _teamCount <= _enemyCount) || (_teamCount <= _enemyCount && _teamCount <= _turn)) && !(Stragegy is Solo))
             {
                 // Oka go
                 Stragegy = new Solo(this);
