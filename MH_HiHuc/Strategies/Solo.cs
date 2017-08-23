@@ -69,15 +69,7 @@ namespace MH_HiHuc.Strategies
         public override void OnHitRobot(HitRobotEvent e)
         {
             UpdateMoveFactor();
-
-            if (!MyBot.IsTeammate(e.Name))
-            {
-                double absoluteBearing = MyBot.HeadingRadians + e.BearingRadians;
-                MyBot.TurnGunRightRadians(Utils.NormalRelativeAngle(absoluteBearing -
-                               MyBot.GunHeadingRadians));
-                MyBot.Fire(3); // fire enemy when hit him
-            }
-            
+            base.OnHitRobot(e);
         }
 
         private void UpdateMoveFactor()
@@ -104,7 +96,7 @@ namespace MH_HiHuc.Strategies
 
         private void Fire(ScannedRobotEvent e)
         {
-            var bullerPower = 400 / e.Distance;
+            var bullerPower = MyBot.Energy > 10 ? 400 / e.Distance : 0.1;
 
             //http://robowiki.net/wiki/Linear_Targeting
             double absoluteBearing = MyBot.HeadingRadians + e.BearingRadians;

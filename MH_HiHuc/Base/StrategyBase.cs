@@ -1,6 +1,7 @@
 ﻿using System;
 using MH_HiHuc.Strategies;
 using Robocode;
+using Robocode.Util;
 
 namespace MH_HiHuc.Base
 {
@@ -29,8 +30,15 @@ namespace MH_HiHuc.Base
         {
         }
 
-        public virtual void OnHitRobot(HitRobotEvent evnt)
+        public virtual void OnHitRobot(HitRobotEvent e)
         {
+            if (!MyBot.IsTeammate(e.Name))
+            {
+                double absoluteBearing = MyBot.HeadingRadians + e.BearingRadians;
+                MyBot.TurnGunRightRadians(Utils.NormalRelativeAngle(absoluteBearing -
+                               MyBot.GunHeadingRadians));
+                MyBot.Fire(3); // fire enemy when hit him
+            }
         }
 
         public virtual void OnHitWall(HitWallEvent e)
